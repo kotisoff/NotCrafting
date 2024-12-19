@@ -1,0 +1,19 @@
+{
+  "Lua.diagnostics.globals": [
+    "inventory",
+    "document",
+    "events",
+    "player",
+    "PACK_ID",
+    "file",
+    "json",
+    "time",
+    "item",
+    "block",
+    "vec3",
+    "gfx",
+    "pack",
+    "hud"
+  ],
+  "Lua.diagnostics.disable": ["lowercase-global"]
+}

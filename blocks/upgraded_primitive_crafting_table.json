@@ -1,0 +1,7 @@
+{
+  "texture-faces": ["wood", "wood", "wood_top", "upgraded_primitive_crafting_table_top", "wood", "wood"],
+  "caption": "primitive crafting table",
+  "rotation": "pane",
+  "script-name": "primitive_crafting_table",
+  "inventory-size": 9
+}

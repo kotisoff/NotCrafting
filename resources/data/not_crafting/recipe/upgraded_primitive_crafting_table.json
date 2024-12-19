@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "item": "base:planks"
+    },
+    {
+      "item": "not_crafting:primitive_crafting_table"
+    },
+    {
+      "item": "not_survival:flint"
+    },
+    {
+      "item": "not_survival:flint"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "not_crafting:upgraded_primitive_crafting_table"
+  }
+}

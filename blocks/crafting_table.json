@@ -1,0 +1,12 @@
+{
+  "texture-faces": [
+    "crafting_table_side",
+    "crafting_table_side",
+    "planks",
+    "crafting_table_top",
+    "crafting_table_side",
+    "crafting_table_front"
+  ],
+  "rotation": "pane",
+  "inventory-size": 10
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "base:planks"
+    },
+    "X": {
+      "item": "not_crafting:upgraded_primitive_crafting_table"
+    },
+    "O": {
+      "item": "not_survival:flint"
+    }
+  },
+  "pattern": [" # ", "OXO", " # "],
+  "result": {
+    "count": 1,
+    "id": "not_crafting:crafting_table"
+  },
+  "show_notification": false
+}

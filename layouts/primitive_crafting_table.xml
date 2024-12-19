@@ -1,0 +1,4 @@
+<inventory size="524,200">
+  <label color="#aeaeae" gravity="top-center" margin="0,4,0,4">Primitive Crafting Table</label>
+  <slots-grid rows="2" count="4" start-index="0" pos="210,48" sharefunc="share_func" />
+</inventory>

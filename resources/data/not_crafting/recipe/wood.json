@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "wood",
+  "ingredients": [
+    {
+      "item": "not_crafting:primitive_crafting_table"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "base:wood"
+  }
+}

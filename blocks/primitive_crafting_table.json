@@ -1,0 +1,5 @@
+{
+  "texture-faces": ["wood", "wood", "wood_top", "primitive_crafting_table_top", "wood", "wood"],
+  "rotation": "pane",
+  "inventory-size": 4
+}
