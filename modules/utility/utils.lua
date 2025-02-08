@@ -1,4 +1,8 @@
-local PACK_ID = PACK_ID or "not_survival"; local function resource(name) return PACK_ID .. ":" .. name end;
+---@diagnostic disable: undefined-field
+
+local resource = require "utility/resource_func"
+
+local log = require("utility/logger").new(PACK_ID, "not_utils");
 
 function inventory.consume_selected(pid)
   local invid, slot = player.get_inventory(pid);
@@ -6,59 +10,69 @@ function inventory.consume_selected(pid)
   inventory.set(invid, slot, itemid, count - 1);
 end
 
-function block.item_index(blockname)
-  return block.get_picking_item(block.index(blockname));
-end
-
 local not_utils = {};
 
----@param itemname string
----@return boolean
----@return number | string
+---@param itemname string|number
+---@return number|nil
 function not_utils.index_item(itemname)
-  local status = true;
-  local itemid_or_err = 0;
+  if not itemname or type(itemname) == "number" then
+    return itemname;
+  end
 
-  status, itemid_or_err = pcall(block.item_index, itemname);
-  if not status then
-    status, itemid_or_err = pcall(item.index, itemname)
-  end;
-  if not status then
-    status, itemid_or_err = pcall(item.index, itemname .. ".item")
-  end;
+  local itemid = nil;
 
-  return status, itemid_or_err;
+  itemid = item.index(itemname)
+  if not itemid then
+    itemid = item.index(itemname .. ".item");
+  end
+
+  return itemid;
 end
 
+---@param num number
+---@param accuracy number
+---@return number
 function not_utils.round_to(num, accuracy)
   return (math.floor(num) * accuracy) / accuracy
 end
 
+---@param chance number
+---@param cb fun(): any
+function not_utils.random_cb(chance, cb)
+  if chance > math.random() then
+    return cb()
+  end
+end
+
+-- Coroutines
+
 local coroutines = {};
 
+---@param func fun()
 function not_utils.create_coroutine(func)
   local co = coroutine.create(func);
   table.insert(coroutines, co);
 end
 
 ---@param timesec number
----@param break_cb function|nil Break callback. Stop sleeping if false.
----@param cycle_task function|nil Task repeating every tick.
+---@param break_cb (fun(tempdata:any):boolean)|nil Break sleeping if true.
+---@param cycle_task (fun(tempdata: any, time_passed: number))|nil Task repeating every tick.
 ---@return boolean
 function not_utils.sleep_with_break(timesec, break_cb, cycle_task)
   local tempdata = {};
   break_cb = break_cb or function(a) return false end;
-  cycle_task = cycle_task or function(a) end
+  cycle_task = cycle_task or function(a, t) end
 
   local start = time.uptime()
   while time.uptime() - start < timesec do
     if break_cb(tempdata) then return false end;
-    cycle_task(tempdata);
-    coroutine.yield()
+    cycle_task(tempdata, time.uptime() - start);
+    coroutine.yield();
   end
   return true;
 end
 
+---@param timesec number
 function not_utils.sleep(timesec)
   local start = time.uptime()
   while time.uptime() - start < timesec do
@@ -74,5 +88,36 @@ events.on(resource("world_tick"), function()
     end
   end
 end)
+
+---Parse callback strings.
+---@param prop string Property value. path or path@func or function(...) end
+---@return fun(...)
+function not_utils.parse_callback_string(prop)
+  local callback = function(...) end;
+
+  -- Callback as string function
+  if string.starts_with(prop, "function(") then
+    local cb, error = loadstring("(" .. prop .. ")()");
+    if error then
+      log:println(
+        "Error occured while parsing property callback:\n" .. prop
+      )
+    elseif cb then
+      callback = cb;
+    end
+  else
+    -- Callback as script path and function name.
+    local filepath, func_name = unpack(string.split(prop, "@"));
+    local module = require(filepath);
+
+    if func_name then
+      callback = module[func_name];
+    else
+      callback = module;
+    end
+  end
+
+  return callback;
+end
 
 return not_utils;

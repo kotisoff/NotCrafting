@@ -1,4 +1,4 @@
-require "utils"
+require "utility/utils"
 local recipe_engine = require "recipe/engine";
 
 local function check_grid(invid, slot)

@@ -47,14 +47,6 @@ local function removeFurnaceTick(pos)
   table.remove(temp.data, key);
 end
 
-function string.split(self, sep)
-  local t = {};
-  for val in self:gmatch("[^" .. sep .. "]+") do
-    table.insert(t, val);
-  end
-  return t;
-end
-
 local function check_grid(invid)
   return recipe_engine.check_crafting_grid(invid, { 1, 2 }, { "smelting" });
 end

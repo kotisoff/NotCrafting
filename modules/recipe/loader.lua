@@ -1,29 +1,26 @@
-local PACK_ID = "not_crafting";
-
 local not_utils = require "utility/utils";
 local ResourceLoader = require "utility/resource_loader";
-ResourceLoader.set_pack_id(PACK_ID);
 
-local recipe_loader = ResourceLoader.new("recipe_loader");
+local recipe_loader = ResourceLoader.new("not_crafting", "recipe_loader");
 
 recipe_loader.recipes = {};
 
 recipe_loader:scan_packs("data", { "not_survival", "not_crafting" })
 recipe_loader:load_folders(
   "recipe",
-  function(_, data) return data.result ~= nil end
+  function(_, _, data) return data.result ~= nil end
 )
 
 function recipe_loader.index_recipe_item(self, recipe, itemname)
-  local status, itemid = not_utils.index_item(itemname);
+  local itemid = not_utils.index_item(itemname);
 
-  if not status then
+  if not itemid then
     self.logger:silent(
       'Error indexing recipe "' ..
       recipe.name .. '". Error: ' .. itemid
     )
-    return nil;
   end
+
   return itemid;
 end
 
