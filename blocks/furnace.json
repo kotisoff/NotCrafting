@@ -1,5 +1,7 @@
 {
   "texture-faces": ["furnace_side", "furnace_side", "furnace_top", "furnace_top", "furnace_side", "furnace_front"],
   "rotation": "pane",
-  "inventory-size": 3
+  "inventory-size": 3,
+  "material": "base:stone",
+  "base:durability": 13
 }

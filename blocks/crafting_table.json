@@ -8,5 +8,7 @@
     "crafting_table_front"
   ],
   "rotation": "pane",
-  "inventory-size": 10
+  "inventory-size": 10,
+  "material": "base:wood",
+  "base:durability": 6.0
 }

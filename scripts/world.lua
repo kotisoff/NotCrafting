@@ -1,5 +1,7 @@
 local function resource(name) return PACK_ID .. ":" .. name end
 
+require "init";
+
 local first_tick = true;
 function on_world_open()
   first_tick = true;

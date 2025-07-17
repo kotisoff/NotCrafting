@@ -1,7 +1,10 @@
 {
   "id": "not_crafting",
   "title": "Not Crafting",
-  "version": "0.1.4",
+  "version": "0.2.0-mp-preview",
   "creator": "KotIsOff",
-  "description": "Точно не апи для крафтов."
+  "description": "Точно не апи для крафтов.\nОго.",
+  "dependencies": [
+    "not_utils"
+  ]
 }

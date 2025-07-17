@@ -3,5 +3,7 @@
   "caption": "primitive crafting table",
   "rotation": "pane",
   "script-name": "primitive_crafting_table",
-  "inventory-size": 9
+  "inventory-size": 9,
+  "material": "base:wood",
+  "base:durability": 6.0
 }
