@@ -11,7 +11,7 @@ local function check_match(recipe, grid, offset)
   local found_slots = {};
   local used_slots = {};
 
-  local pattern = recipe.pattern;
+  local pattern = table.reverse(recipe.pattern);
 
   local p_h, p_w = #pattern, #pattern[1];
   local o_r, o_c = unpack(offset);

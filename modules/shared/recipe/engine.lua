@@ -1,12 +1,14 @@
 local loader = require "shared/recipe/loader";
 local require_folder = require "shared/utils/require_folder";
 
+---@alias not_crafting.class.grid {id: int, count: int}[]
+
 local module = {
-  ---@type table<str, (fun(grid: {id: int, count: int}[], recipe: not_crafting.class.recipe): int[] | nil)>
+  ---@type table<str, (fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): int[] | nil)>
   engines = {}
 };
 
----@param check fun(grid: {id: int, count: int}[], recipe: not_crafting.class.recipe): int[] | nil
+---@param check fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): int[] | nil
 function module.add_recipe_type(identifier, check)
   module.engines[identifier] = check;
 end
@@ -14,7 +16,8 @@ end
 function module.reload_recipes() loader.reload(module.engines) end
 
 ---@param craftblockid int
----@param grid { id: int, count: int }[]
+---@param grid not_crafting.class.grid
+---@return int[] | nil, not_crafting.class.recipe | nil
 function module.resolve_grid(craftblockid, grid)
   local props = block.properties[craftblockid];
   ---@type str[] | nil
@@ -41,9 +44,28 @@ end
 
 function module.take_items(invid, slots)
   for _, slot in ipairs(slots) do
-    inventory.decrement(invid, slot, 1);
+    inventory.decrement(invid, slot - 1, 1);
   end
 end
+
+---@param invid int
+---@param ignored_slots int[] | nil
+---@return not_crafting.class.grid
+function module.get_grid(invid, ignored_slots)
+  local grid = {};
+  local invsize = inventory.size(invid);
+
+  for i = 0, invsize - 1 do
+    if not ignored_slots or not table.has(ignored_slots, i) then
+      local itemid, count = inventory.get(invid, i);
+      table.insert(grid, { id = itemid, count = count })
+    end
+  end
+
+  return grid;
+end
+
+-- =========================init============================
 
 local craft_types = require_folder "shared/recipe/craft_types";
 
@@ -55,11 +77,6 @@ events.on("not_crafting:hud_open", function()
   end
 
   module.reload_recipes();
-
-  local slots, recipe = module.resolve_grid(block.index("not_crafting:crafting_table"),
-    { { id = block.index("base:wood"), count = 1 } });
-
-  debug.print(recipe);
 end)
 
 return module;

@@ -1,4 +1,3 @@
-require "utility/utils";
 local recipe_engine = require "shared/recipe/engine";
 local base_utils = require "base:util";
 
@@ -9,9 +8,13 @@ function on_interact(x, y, z, pid)
   local itemid, _ = inventory.get(pinvid, slot);
   if itemid == item.index(craft_item) then
     local invid = inventory.get_block(x, y, z);
-    local recipe, found_items = recipe_engine.check_crafting_grid(invid, { 9 }, { "shaped", "shapeless" });
+    local blockid = block.get(x, y, z);
+
+    local grid = recipe_engine.get_grid(invid, { 9 });
+    local slots, recipe = recipe_engine.resolve_grid(blockid, grid);
+
     if recipe then
-      recipe_engine.take_items(invid, found_items);
+      recipe_engine.take_items(invid, slots);
       inventory.set(invid, 9, 0, 0);
 
       base_utils.drop(

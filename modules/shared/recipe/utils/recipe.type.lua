@@ -1,7 +1,8 @@
----@alias not_crafting.class.recipe.ingredient { item?: str, count?: int, tag?: str }
----@alias not_crafting.class.recipe.result { id: str, count?: int };
+---@alias not_crafting.class.recipe.ingredient { item?: int, items?: int[], count?: int, tag?: str }
+---@alias not_crafting.class.recipe.result { id: int, count?: int };
 
 ---@class not_crafting.class.recipe
+---@field path str
 ---@field type str
 ---@field category str
 ---@field group? str
