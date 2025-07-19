@@ -5,5 +5,6 @@
   "script-name": "primitive_crafting_table",
   "inventory-size": 9,
   "material": "base:wood",
-  "base:durability": 6.0
+  "base:durability": 6.0,
+  "not_crafting:craft_types": ["not_crafting:crafting_shaped", "not_crafting:crafting_shapeless"]
 }

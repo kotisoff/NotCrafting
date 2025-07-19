@@ -1,16 +1,5 @@
 {
-  "blocks": [
-    "primitive_crafting_table",
-    "upgraded_primitive_crafting_table",
-    "crafting_table",
-    "furnace"
-  ],
-  "items": [
-    "not_survival:flint",
-    "base:leaves.item",
-    "base:planks.item",
-    "base:wood.item",
-    "base:wooden_door.item"
-  ],
+  "blocks": ["primitive_crafting_table", "upgraded_primitive_crafting_table", "crafting_table", "furnace"],
+  "items": ["base:leaves.item", "base:planks.item", "base:wood.item", "base:wooden_door.item"],
   "entities": []
 }

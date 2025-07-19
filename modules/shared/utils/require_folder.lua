@@ -1,4 +1,4 @@
-local packid = "not_survival"
+local packid = "not_crafting"
 
 ---@param folder string
 return function(folder)

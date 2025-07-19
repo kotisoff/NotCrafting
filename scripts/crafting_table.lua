@@ -1,5 +1,5 @@
 require "utility/utils";
-local recipe_engine = require "recipe/engine";
+local recipe_engine = require "shared/recipe/engine";
 local base_utils = require "base:util";
 
 local craft_item = "not_survival:flint";

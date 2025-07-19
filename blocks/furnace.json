@@ -3,5 +3,6 @@
   "rotation": "pane",
   "inventory-size": 3,
   "material": "base:stone",
-  "base:durability": 13
+  "base:durability": 13,
+  "not_crafting:craft_types": ["not_crafting:smelting"]
 }
