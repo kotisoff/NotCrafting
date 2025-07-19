@@ -1,0 +1,14 @@
+---@alias not_crafting.class.recipe.ingredient { item?: str, count?: int, tag?: str }
+---@alias not_crafting.class.recipe.result { id: str, count?: int };
+
+---@class not_crafting.class.recipe
+---@field type str
+---@field category str
+---@field group? str
+---@field cookingtime int
+---@field experience number
+---@field key table<str, not_crafting.class.recipe.ingredient>
+---@field ingredients not_crafting.class.recipe.ingredient[]
+---@field ingredient not_crafting.class.recipe.ingredient
+---@field pattern str[]
+---@field result not_crafting.class.recipe.result

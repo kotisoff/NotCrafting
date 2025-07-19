@@ -39,15 +39,15 @@ local function index_item(filename, itemname)
   return validate(itemid);
 end
 
----@param recipe_types { id: str, check: fun(), use: fun() }[]
+---@param recipe_types table<str, function>
 function module.reload(recipe_types)
   module.logger:info("Loading recipes...");
   module.recipes = {};
 
   local installed = pack.get_installed();
 
-  for _, value in pairs(recipe_types) do
-    module.recipes[value.id] = {};
+  for id, fun in pairs(recipe_types) do
+    module.recipes[id] = {};
   end
 
   for _, packid in ipairs(installed) do
