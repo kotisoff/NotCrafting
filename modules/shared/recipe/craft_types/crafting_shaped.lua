@@ -15,7 +15,7 @@ local function check_match(recipe, grid, offset)
 
   local p_h, p_w = #pattern, #pattern[1];
   local o_r, o_c = unpack(offset);
-  local grid_row_size = math.sqrt(grid_size);
+  local grid_row_size = math.sqrt(#grid);
 
   for row = 1, p_h do
     for col = 1, p_w do
@@ -24,7 +24,7 @@ local function check_match(recipe, grid, offset)
       local g_c = o_c + col - 1;
       local grid_slot = g_r * grid_row_size + g_c + 1; -- Единица тут для индексации с 1.
 
-      local grid_item = grid[g_index];
+      local grid_item = grid[grid_slot];
 
       if char ~= " " then
         local key = recipe.key[char];
