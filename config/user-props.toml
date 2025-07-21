@@ -1,5 +1,5 @@
 # Кол-во тиков горения топлива. Целое число.
 "not_crafting:fuel_burn_time" = {}
 
-# Типы крафтов, которые поддерживает блок.
-"not_crafting:craft_types" = {}
+# Таблица с данными о блоке крафта.
+"not_crafting:crafting_block_data" = {}

@@ -1,7 +1,6 @@
 local function resource(name) return PACK_ID .. ":" .. name end
 
-local recipe_engine = require "recipe/engine";
-local not_utils = require "utility/utils";
+local recipe_engine = require "shared/recipe/engine";
 
 -- FURNACE DATA
 
@@ -48,7 +47,10 @@ local function removeFurnaceTick(pos)
 end
 
 local function check_grid(invid)
-  return recipe_engine.check_crafting_grid(invid, { 1, 2 }, { "smelting" });
+  local grid = recipe_engine.get_grid(invid, { 1, 2 });
+  local blockid = block.index("not_crafting:furnace");
+
+  return recipe_engine.resolve_grid(blockid, grid);
 end
 
 local current_block = nil;
@@ -160,7 +162,7 @@ events.on(resource("world_tick"), function()
 
       local is_smelting = false;
 
-      local recipe = check_grid(invid);
+      local _, recipe = check_grid(invid);
 
       -- Fuel drain
       if recipe then

@@ -15,3 +15,7 @@ function on_world_tick(tps)
 
   events.emit(resource("world_tick"))
 end
+
+function on_world_quit()
+  events.remove_by_prefix(PACK_ID);
+end

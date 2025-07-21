@@ -3,7 +3,7 @@ local resource = require "shared/utils/resource_func";
 local module = {};
 module.id = resource("smelting");
 
----@param grid { id: int, count: int }[]
+---@param grid not_crafting.class.grid
 ---@param recipe not_crafting.class.recipe
 function module.check(grid, recipe)
   local ingredient = recipe.ingredient

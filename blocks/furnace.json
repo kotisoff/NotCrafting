@@ -4,5 +4,7 @@
   "inventory-size": 3,
   "material": "base:stone",
   "base:durability": 13,
-  "not_crafting:craft_types": ["not_crafting:smelting"]
+  "not_crafting:crafting_block_data": {
+    "recipe_types": ["not_crafting:smelting"]
+  }
 }

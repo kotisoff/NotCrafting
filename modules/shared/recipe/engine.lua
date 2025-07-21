@@ -20,12 +20,13 @@ function module.reload_recipes() loader.reload(module.engines) end
 ---@return int[] | nil, not_crafting.class.recipe | nil
 function module.resolve_grid(craftblockid, grid)
   local props = block.properties[craftblockid];
-  ---@type str[] | nil
-  local prop = props["not_crafting:craft_types"];
+  ---@type { recipe_types: str[] }
+  local prop = (props["not_crafting:crafting_block_data"] or {});
+  local recipe_types = prop.recipe_types;
 
-  if not prop then return nil end;
+  if not recipe_types then return nil end;
 
-  for _, recipe_type in ipairs(prop) do
+  for _, recipe_type in ipairs(recipe_types) do
     local recipes = loader.recipes[recipe_type];
     local engine = module.engines[recipe_type];
 
@@ -42,7 +43,9 @@ function module.resolve_grid(craftblockid, grid)
   return nil;
 end
 
+---@param slots int[]
 function module.take_items(invid, slots)
+  debug.print(slots);
   for _, slot in ipairs(slots) do
     inventory.decrement(invid, slot - 1, 1);
   end

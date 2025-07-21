@@ -1,11 +1,11 @@
 local resource = require "shared/utils/resource_func";
-local micro_logger = require "shared/recipe/utils/micro_logger";
+local logger = require "shared/recipe/utils/logger";
 
 local module = {};
 module.id = resource("crafting_shaped");
 
 ---@param recipe not_crafting.class.recipe
----@param grid { id: int, count: int }[]
+---@param grid not_crafting.class.grid
 ---@param offset vec2
 local function check_match(recipe, grid, offset)
   local found_slots = {};
@@ -15,14 +15,14 @@ local function check_match(recipe, grid, offset)
 
   local p_h, p_w = #pattern, #pattern[1];
   local o_r, o_c = unpack(offset);
-  local grid_row_size = math.sqrt(#grid);
+  local grid_row_size = math.sqrt(grid_size);
 
   for row = 1, p_h do
     for col = 1, p_w do
       local char = pattern[row]:sub(col, col);
       local g_r = o_r + row - 1;
       local g_c = o_c + col - 1;
-      local g_index = g_r * grid_row_size + g_c + 1; -- Единица тут для индексации с 1.
+      local grid_slot = g_r * grid_row_size + g_c + 1; -- Единица тут для индексации с 1.
 
       local grid_item = grid[g_index];
 
@@ -32,8 +32,8 @@ local function check_match(recipe, grid, offset)
           return nil;
         end
 
-        table.insert(found_slots, g_index);
-        used_slots[g_index] = true;
+        table.insert(found_slots, grid_slot);
+        used_slots[grid_slot] = true;
       end
     end
   end
@@ -48,11 +48,12 @@ local function check_match(recipe, grid, offset)
 end
 
 ---@param recipe { pattern: str[], key: table<str, {item: str}> }
+---@param grid not_crafting.class.grid
 function module.check(grid, recipe)
   local row_size = math.sqrt(#grid);
 
   if row_size % 1 ~= 0 then
-    micro_logger:print("Wrong crafting grid size. Fix inventory size.");
+    logger:println("E", "Wrong crafting grid size. Fix inventory size.");
     return nil;
   end
 
