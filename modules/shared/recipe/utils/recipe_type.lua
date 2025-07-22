@@ -1,0 +1,21 @@
+---@class not_crafting.class.recipe.ingredient
+---@field item? int вместо tag
+---@field count? int default=1
+---@field tag? str вместо item
+
+---@class not_crafting.class.recipe.result
+---@field id int
+---@field count? int default=1
+
+---@class not_crafting.class.recipe
+---@field type str
+---@field category str категория рецептов
+---@field group? str семейство рецептов. например "minecraft:planks". работает только при tag
+---@field cookingtime? int только для рецептов с жаркой
+---@field experience? number дробное число
+---@field key? table<str, not_crafting.class.recipe.ingredient> key, ingredients, ingredient взаимозаменяемы
+---@field ingredients? not_crafting.class.recipe.ingredient[] key, ingredients, ingredient взаимозаменяемы
+---@field ingredient? not_crafting.class.recipe.ingredient key, ingredients, ingredient взаимозаменяемы
+---@field pattern? str[] только если есть key
+---@field result not_crafting.class.recipe.result
+---@field show_notification? bool default=true

@@ -1,7 +1,6 @@
 {
   "type": "not_crafting:crafting_shapeless",
-  "category": "building",
-  "group": "wood",
+  "category": "misc",
   "ingredients": [
     {
       "item": "not_crafting:primitive_crafting_table"

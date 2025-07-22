@@ -1,7 +1,6 @@
 {
   "type": "not_crafting:crafting_shapeless",
-  "category": "building",
-  "group": "planks",
+  "category": "misc",
   "ingredients": [
     {
       "item": "base:planks"

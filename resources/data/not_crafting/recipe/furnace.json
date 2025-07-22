@@ -1,6 +1,6 @@
 {
   "type": "not_crafting:crafting_shaped",
-  "category": "ну пока категории не нужны :D",
+  "category": "misc",
   "key": {
     "#": {
       "item": "not_survival:cobblestone"

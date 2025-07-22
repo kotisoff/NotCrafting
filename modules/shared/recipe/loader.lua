@@ -7,6 +7,7 @@ local reader = fileReader.new();
 local logger = Logger.new("not_crafting");
 
 local module = {
+  ---@type table<string, not_crafting.class.recipe[]>
   recipes = {}
 };
 
@@ -67,6 +68,8 @@ function module.reload(recipe_types)
 
         return parsed;
       end)
+  ---@param data not_crafting.class.recipe
+  ---@param path str
       :for_each(function(data, path)
         logger:log("I",
           string.format("Indexing recipe '%s' from '%s/%s'...",
@@ -82,8 +85,6 @@ function module.reload(recipe_types)
           reason = string.format("recipe type '%s' is not supported", data.type);
         else
           valid = pcall(function()
-            data.path = path;
-
             data.result = {
               id = index_item(path, data.result.id),
               count = data.result.count or 1
@@ -96,6 +97,11 @@ function module.reload(recipe_types)
                 local itemid = index_item(path, latest_item);
                 value.item = itemid;
               end
+            elseif data.ingredient then
+              local value = data.ingredient;
+              latest_item = (value or {}).item;
+              local itemid = index_item(path, latest_item);
+              value.item = itemid;
             end
           end)
 
