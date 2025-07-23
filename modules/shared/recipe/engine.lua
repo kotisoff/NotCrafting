@@ -2,7 +2,11 @@ local loader            = require "shared/recipe/loader";
 local require_folder    = require "shared/utils/require_folder";
 local not_utils         = require "shared/utils/not_utils"
 local recipe_compressor = require "shared/recipe/utils/recipe_compressor"
-local mp                = not_utils.multiplayer.api;
+local packets           = require "shared/recipe/utils/declarations/packets"
+local _mp               = not_utils.multiplayer;
+local mp                = _mp.api;
+
+local log               = not_utils.Logger.new("not_crafting");
 
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
@@ -111,6 +115,9 @@ function module.decompress_grid(comp_grid)
   return grid;
 end
 
+-- ==================recipes=compression====================
+
+---@return bytearray
 function module.compress_recipes()
   local compressed = {};
   for key, recipes in pairs(loader.recipes) do
@@ -121,10 +128,10 @@ function module.compress_recipes()
     end
   end
 
-  return compressed;
+  return bjson.tobytes(compressed, true);
 end
 
----@param compressed table<string, any[][]>
+---@param compressed bytearray
 function module.decompress_recipes(compressed)
   local decompressed = {};
   for key, recipes in pairs(compressed) do
@@ -135,48 +142,63 @@ function module.decompress_recipes(compressed)
     end
   end
 
-  return decompressed;
-end
-
-local function checkIntegrity(recipes1, recipes2)
-  local max_integrity = 0;
-  local integrity = 0;
-  for key, recipes in pairs(recipes1) do
-    for id, recipe in ipairs(recipes) do
-      if recipes2[key][id].result.id == recipe.result.id then
-        integrity = integrity + 1;
-      end
-      max_integrity = max_integrity + 1;
-    end
-  end
-
-  print(string.format("integrity: %s", integrity / max_integrity * 100) .. "%")
+  return bjson.frombytes(decompressed);
 end
 
 -- =========================init============================
 
-local craft_types = require_folder "shared/recipe/craft_types";
+log:println("I", "Loading recipe types...");
 
-events.on("not_crafting:server_init", function()
-  ---@type { id: str, check: function }[]
+---@type { id: str, check: function }[]
+local recipe_types = require_folder "shared/recipe/recipe_types";
+local keys = {};
 
-  for _, craft_type in ipairs(craft_types) do
-    module.add_recipe_type(craft_type.id, craft_type.check);
-  end
+for _, value in ipairs(recipe_types) do
+  table.insert(keys, value.id);
+end
 
-  local server = mp.server;
+local addon_craft_types = setmetatable({}, {
+  __index = {
+    add = function(id, check)
+      if type(id) == "string" and type(check) == "function" then
+        if table.has(keys, id) then
+          return log:log("E", string.format("Recipe type with '%s' id already exists!", id))
+        end
 
+        table.insert(recipe_types, { id = id, check = check });
+      end
+    end
+  }
+})
+events.emit("not_crafting:load_recipe_types", addon_craft_types);
+
+for _, recipe_type in ipairs(recipe_types) do
+  module.add_recipe_type(recipe_type.id, recipe_type.check);
+end;
+
+log:print();
+log:println("I", "Recipe types loading done.");
+
+_mp.as_server(function(server, mode)
   module.reload_recipes();
-  local data = server.bson.serialize(loader.recipes);
-  print("original:", #data);
-  local comp1 = module.compress_recipes();
-  -- local comp1_comp = server.bson.serialize(comp1);
-  local comp1_comp = bjson.tobytes(comp1);
-  print("compressed:", #comp1_comp);
-  local decomp = module.decompress_recipes(comp1);
-  local decomp_comp = server.bson.serialize(decomp);
-  print("decompressed:", #decomp_comp);
-  checkIntegrity(loader.recipes, decomp);
+
+  if mode == "standalone" then return end;
+
+  log:println("I", "Compressing recipes...");
+
+  ---@type bytearray
+  local compressed_recipes = module.compress_recipes();
+
+  events.on("server:client_connected", function(client)
+    mp.server.events.tell("not_crafting", packets.fetch_recipes, client, compressed_recipes);
+  end)
+end)
+
+_mp.as_client(function(client)
+  client.events.on("not_crafting", packets.fetch_recipes, function(bytes)
+    log:println("I", string.format("Got %s bytes of recipes.", #bytes));
+    loader.recipes = module.decompress_recipes(bytes);
+  end)
 end)
 
 return module;
