@@ -6,7 +6,7 @@ module.id = resource("smelting");
 ---@param grid not_crafting.class.grid
 ---@param recipe not_crafting.class.recipe
 function module.check(grid, recipe)
-  local ingredient = recipe.ingredient
+  local ingredient = recipe.ingredient --[[@as not_crafting.class.recipe.ingredient ]];
 
   for slot, grid_item in ipairs(grid) do
     if grid_item.id == ingredient.item then

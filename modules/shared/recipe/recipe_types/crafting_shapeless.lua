@@ -6,7 +6,7 @@ module.id = resource("crafting_shapeless");
 ---@param grid not_crafting.class.grid
 ---@param recipe not_crafting.class.recipe
 function module.check(grid, recipe)
-  local ingredients = recipe.ingredients;
+  local ingredients = recipe.ingredients --[[@as not_crafting.class.recipe.ingredient[] ]];
 
   ---@type { id: int, count: int, slot: int }[]
   local items = {};

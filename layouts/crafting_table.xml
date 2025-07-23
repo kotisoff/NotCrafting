@@ -2,5 +2,7 @@
   <label color="#aeaeae" gravity="top-center" margin="0,4,0,4">Crafting Table</label>
   <slots-grid rows="3" count="9" start-index="0" pos="132,22" updatefunc="update_grid"
     sharefunc="share_func" />
-  <slot index="9" pos="340,77" updatefunc="update_result" sharefunc="share_func_result" />
+  <slot index="9" pos="340,77"
+    updatefunc="update_result" sharefunc="share_func_result"
+    placing="false" />
 </inventory>

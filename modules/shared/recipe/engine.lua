@@ -2,7 +2,7 @@ local loader            = require "shared/recipe/loader";
 local require_folder    = require "shared/utils/require_folder";
 local not_utils         = require "shared/utils/not_utils"
 local recipe_compressor = require "shared/recipe/utils/recipe_compressor"
-local packets           = require "shared/recipe/utils/declarations/packets"
+local packets           = require "shared/utils/declarations/packets"
 local _mp               = not_utils.multiplayer;
 local mp                = _mp.api;
 
@@ -128,7 +128,7 @@ function module.compress_recipes()
     end
   end
 
-  return bjson.tobytes(compressed, true);
+  return compressed
 end
 
 ---@param compressed bytearray
@@ -142,7 +142,7 @@ function module.decompress_recipes(compressed)
     end
   end
 
-  return bjson.frombytes(decompressed);
+  return decompressed;
 end
 
 -- =========================init============================
@@ -190,14 +190,15 @@ _mp.as_server(function(server, mode)
   local compressed_recipes = module.compress_recipes();
 
   events.on("server:client_connected", function(client)
-    mp.server.events.tell("not_crafting", packets.fetch_recipes, client, compressed_recipes);
+    mp.server.events.tell("not_crafting", packets.fetch_recipes, client, bjson.tobytes(compressed_recipes));
   end)
 end)
 
 _mp.as_client(function(client)
   client.events.on("not_crafting", packets.fetch_recipes, function(bytes)
     log:println("I", string.format("Got %s bytes of recipes.", #bytes));
-    loader.recipes = module.decompress_recipes(bytes);
+    local data = bjson.frombytes(bytes);
+    loader.recipes = module.decompress_recipes(data);
   end)
 end)
 

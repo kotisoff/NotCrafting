@@ -1,6 +1,6 @@
 local mp = require "shared/utils/not_utils".multiplayer;
 
-require "shared/recipe/engine";
+require "sync_data";
 
 if mp.api.server then
   require "server/init"

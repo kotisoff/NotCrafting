@@ -1,34 +1,45 @@
+local mp = require "shared/utils/not_utils".multiplayer;
 local recipe_engine = require "shared/recipe/engine";
 local base_utils = require "base:util";
 
-local craft_item = pack.is_installed("not_survival") and "not_survival:flint" or "base:bazalt_breaker";
-
 function on_interact(x, y, z, pid)
-  local pinvid, slot = player.get_inventory(pid);
-  local itemid, _ = inventory.get(pinvid, slot);
-  if itemid == item.index(craft_item) then
-    local invid = inventory.get_block(x, y, z);
-    local blockid = block.get(x, y, z);
+  local data = require "sync_data";
+  local craft_item = unpack(data);
 
-    local grid = recipe_engine.get_grid(invid);
-    local slots, recipe = recipe_engine.resolve_grid(blockid, grid);
+  local val = mp.as_server(function(server, mode)
+    local pinvid, slot = player.get_inventory(pid);
+    local itemid, _ = inventory.get(pinvid, slot);
+    if itemid == craft_item then
+      local invid = inventory.get_block(x, y, z);
+      local blockid = block.get(x, y, z);
 
-    if recipe then
-      local sound = block.materials[block.material(blockid)].stepsSound;
-      audio.play_sound(sound, x, y, z, 1, 1);
+      local grid = recipe_engine.get_grid(invid);
+      local slots, recipe = recipe_engine.resolve_grid(blockid, grid);
 
-      recipe_engine.take_items(invid, slots);
+      if slots and recipe then
+        local sound = block.materials[block.material(blockid)].stepsSound;
+        audio.play_sound(sound, x, y, z, 1, 1);
 
-      local entity = base_utils.drop(
-        vec3.add({ x, y + 1, z }, 0.5),
-        recipe.result.id,
-        recipe.result.count
-      );
-      entity.rigidbody:set_vel(vec3.spherical_rand(3));
+        recipe_engine.take_items(invid, slots);
 
-      return true;
+        local ent = base_utils.drop(
+          vec3.add({ x, y + 1, z }, 0.5),
+          recipe.result.id,
+          recipe.result.count
+        )
+
+        if mode == "standalone" then
+          ent.rigidbody:set_vel(vec3.spherical_rand(3));
+        end
+
+        return true;
+      end
     end
-  end
-  hud.open_block(x, y, z);
-  return true;
+  end)
+  if val then return val end;
+
+  return mp.as_client(function(client, mode)
+    hud.open_block(x, y, z);
+    return true;
+  end)
 end

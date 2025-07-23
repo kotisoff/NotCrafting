@@ -1,4 +1,4 @@
-local recipe_engine = require "shared/recipe/engine";
+local recipe_engine = require "client/crafting";
 
 local function check_grid(invid, slot)
   local grid = recipe_engine.get_grid(invid, { slot or 9 });
@@ -23,7 +23,6 @@ function update_result(invid, slot)
   local slots = check_grid(invid);
 
   if slots then
-    recipe_engine.take_items(invid, slots);
     update_grid(invid);
   end
 end

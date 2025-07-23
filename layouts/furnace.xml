@@ -2,7 +2,9 @@
   <label color="#aeaeae" gravity="top-center" margin="0,4,0,4">Furnace</label>
   <slot index="0" pos="184,22" />
   <slot index="1" pos="184,126" />
-  <slot index="2" pos="288,74" sharefunc="share_func" updatefunc="update_result" />
+  <slot index="2" pos="288,74"
+    sharefunc="share_func" updatefunc="update_result"
+    placing="false" />
   <container pos="184,180" size="50,5" color="#aeaeae" />
   <container pos="184,180" size="50,5" color="#BB0000" id="burntime" visible="false" />
   <container pos="241,95" size="40,5" color="#aeaeae" />
