@@ -5,7 +5,6 @@
   "creator": "KotIsOff",
   "description": "Точно не апи для крафтов.\nОго.",
   "dependencies": [
-    "not_utils",
-    "?simpleitemtags"
+    "not_utils"
   ]
 }
