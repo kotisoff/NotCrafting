@@ -1,10 +1,9 @@
 local nu = require "shared/utils/not_utils";
 local fileReader = nu.FileReader;
-local Logger = nu.Logger;
 local utils = nu.utils;
 
 local reader = fileReader.new();
-local logger = Logger.new("not_crafting");
+local logger = require "logger";
 
 local module = {
   ---@type table<string, not_crafting.class.recipe[]>
@@ -22,7 +21,7 @@ end
 ---@param path str
 ---@param reason str
 local function log_recipe_error(path, reason)
-  logger:log("E",
+  logger.log("E",
     string.format("Failed to index item in '%s' from '%s/%s'. Reason: %s",
       file.stem(path),
       file.prefix(path),
@@ -42,7 +41,7 @@ end
 
 ---@param recipe_types table<str, function>
 function module.reload(recipe_types)
-  logger:log("I", "Loading recipes...");
+  logger.log("I", "Loading recipes...");
   module.recipes = {};
 
   local installed = pack.get_installed();
@@ -62,7 +61,7 @@ function module.reload(recipe_types)
       :read(function(data, path)
         local status, parsed = pcall(json.parse, data);
         if not status then
-          return logger:log("E",
+          return logger.log("E",
             string.format("Unable to load recipe '%s' from pack '%s'", path, file.prefix(path)));
         end
 
@@ -71,7 +70,7 @@ function module.reload(recipe_types)
   ---@param data not_crafting.class.recipe
   ---@param path str
       :for_each(function(data, path)
-        logger:log("I",
+        logger.log("I",
           string.format("Indexing recipe '%s' from '%s/%s'...",
             file.stem(path),
             file.prefix(path),
@@ -120,8 +119,8 @@ function module.reload(recipe_types)
       end)
       :clear();
 
-  logger:log(errors > 0 and "W" or "I", string.format("Done with %s errors.", errors));
-  logger:print();
+  logger.log(errors > 0 and "W" or "I", string.format("Done with %s errors.", errors));
+  logger.print();
 end
 
 return module;

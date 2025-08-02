@@ -1,13 +1,27 @@
 local recipe_engine = require "client/crafting";
+local mp = require "shared/utils/not_utils".multiplayer.api.client;
+
+local pos = { x = nil, y = nil, z = nil };
+local blockid = block.index("not_crafting:crafting_table");
+
+function on_open(invid, x, y, z)
+  pos = { x = x, y = y, z = z };
+end
 
 local function check_grid(invid, slot)
   local grid = recipe_engine.get_grid(invid, { slot or 9 });
-  local blockid = block.index("not_crafting:crafting_table");
-
   return recipe_engine.resolve_grid(blockid, grid);
 end
 
-function update_grid(invid)
+local function update_slot(invid, slot)
+  local itemid, count = inventory.get(invid, slot);
+
+  mp.sandbox.blocks.sync_slot(pos, { slot_id = slot, item_id = itemid, item_count = count });
+end
+
+function update_grid(invid, slot)
+  update_slot(invid, slot);
+
   local _, recipe = check_grid(invid);
   if recipe then
     inventory.set(invid, 9, recipe.result.id, recipe.result.count);

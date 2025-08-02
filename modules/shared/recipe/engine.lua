@@ -5,8 +5,7 @@ local recipe_compressor = require "shared/recipe/utils/recipe_compressor"
 local packets           = require "shared/utils/declarations/packets"
 local _mp               = not_utils.multiplayer;
 local mp                = _mp.api;
-
-local log               = not_utils.Logger.new("not_crafting");
+local log               = require "logger";
 
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
@@ -147,7 +146,7 @@ end
 
 -- =========================init============================
 
-log:println("I", "Loading recipe types...");
+log.println("I", "Loading recipe types...");
 
 ---@type { id: str, check: function }[]
 local recipe_types = require_folder "shared/recipe/recipe_types";
@@ -162,7 +161,7 @@ local addon_craft_types = setmetatable({}, {
     add = function(id, check)
       if type(id) == "string" and type(check) == "function" then
         if table.has(keys, id) then
-          return log:log("E", string.format("Recipe type with '%s' id already exists!", id))
+          return log.log("E", string.format("Recipe type with '%s' id already exists!", id))
         end
 
         table.insert(recipe_types, { id = id, check = check });
@@ -176,15 +175,15 @@ for _, recipe_type in ipairs(recipe_types) do
   module.add_recipe_type(recipe_type.id, recipe_type.check);
 end;
 
-log:print();
-log:println("I", "Recipe types loading done.");
+log.print();
+log.println("I", "Recipe types loading done.");
 
 _mp.as_server(function(server, mode)
   module.reload_recipes();
 
   if mode == "standalone" then return end;
 
-  log:println("I", "Compressing recipes...");
+  log.println("I", "Compressing recipes...");
 
   ---@type bytearray
   local compressed_recipes = module.compress_recipes();
@@ -196,7 +195,7 @@ end)
 
 _mp.as_client(function(client)
   client.events.on("not_crafting", packets.fetch_recipes, function(bytes)
-    log:println("I", string.format("Got %s bytes of recipes.", #bytes));
+    log.println("I", string.format("Got %s bytes of recipes.", #bytes));
     local data = bjson.frombytes(bytes);
     loader.recipes = module.decompress_recipes(data);
   end)

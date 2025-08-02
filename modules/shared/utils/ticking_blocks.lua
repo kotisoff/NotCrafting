@@ -51,8 +51,7 @@ events.on(resource("world_tick"), function()
         for _, func in ipairs(funcs) do
           func(pos);
         end
-      elseif _blockid >= 0 then
-        print("removed ticker");
+      else
         module.remove(pos);
       end
     end

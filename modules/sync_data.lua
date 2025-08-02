@@ -1,9 +1,9 @@
 local nu             = require "shared/utils/not_utils";
 local mp             = nu.multiplayer;
-local log            = nu.Logger.new("not_crafting");
 local resource       = require "shared/utils/resource_func"
 local simpleitemtags = require "shared/utils/simpleitemtags"
 local packets        = require "shared/utils/declarations/packets"
+local log            = require "logger"
 
 require "shared/recipe/engine"; -- syncing is already done in recipe engine script.
 
@@ -12,7 +12,7 @@ local data = {};
 
 
 events.on(resource("first_tick"), function()
-  log:println("I", "Syncing data");
+  log.println("I", "Syncing data");
   mp.as_server(function(server, mode)
     local craft_item = item.index("base:bazalt_breaker");
     if simpleitemtags then
