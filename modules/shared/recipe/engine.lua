@@ -3,6 +3,7 @@ local require_folder    = require "shared/utils/require_folder";
 local not_utils         = require "shared/utils/not_utils"
 local recipe_compressor = require "shared/recipe/utils/recipe_compressor"
 local packets           = require "shared/utils/declarations/packets"
+local nc_events         = require "shared/utils/nc_events"
 local _mp               = not_utils.multiplayer;
 local mp                = _mp.api;
 local log               = require "logger";
@@ -146,58 +147,61 @@ end
 
 -- =========================init============================
 
-log.println("I", "Loading recipe types...");
+nc_events.on("first_tick", function()
+  log.println("I", "Loading recipe types...");
 
----@type { id: str, check: function }[]
-local recipe_types = require_folder "shared/recipe/recipe_types";
-local keys = {};
+  ---@type { id: str, check: function }[]
+  local recipe_types = require_folder "shared/recipe/recipe_types";
+  local keys = {};
 
-for _, value in ipairs(recipe_types) do
-  table.insert(keys, value.id);
-end
+  for _, value in ipairs(recipe_types) do
+    table.insert(keys, value.id);
+  end
 
-local addon_craft_types = setmetatable({}, {
-  __index = {
-    add = function(id, check)
-      if type(id) == "string" and type(check) == "function" then
-        if table.has(keys, id) then
-          return log.log("E", string.format("Recipe type with '%s' id already exists!", id))
+  local addon_craft_types = setmetatable({}, {
+    __index = {
+      add = function(id, check)
+        if type(id) == "string" and type(check) == "function" then
+          if table.has(keys, id) then
+            return log.log("E", string.format("Recipe type with '%s' id already exists!", id))
+          end
+
+          table.insert(recipe_types, { id = id, check = check });
         end
-
-        table.insert(recipe_types, { id = id, check = check });
       end
-    end
-  }
-})
-events.emit("not_crafting:load_recipe_types", addon_craft_types);
+    }
+  })
+  events.emit("not_crafting:load_recipe_types", addon_craft_types);
 
-for _, recipe_type in ipairs(recipe_types) do
-  module.add_recipe_type(recipe_type.id, recipe_type.check);
-end;
+  for _, recipe_type in ipairs(recipe_types) do
+    module.add_recipe_type(recipe_type.id, recipe_type.check);
+  end;
 
-log.print();
-log.println("I", "Recipe types loading done.");
+  log.print();
+  log.println("I", "Recipe types loading done.");
 
-_mp.as_server(function(server, mode)
-  module.reload_recipes();
+  _mp.as_server(function(server, mode)
+    module.reload_recipes();
 
-  if mode == "standalone" then return end;
+    if mode == "standalone" then return end;
 
-  log.println("I", "Compressing recipes...");
+    log.println("I", "Compressing recipes...");
 
-  ---@type bytearray
-  local compressed_recipes = module.compress_recipes();
+    ---@type bytearray
+    local compressed_recipes = module.compress_recipes();
 
-  events.on("server:client_connected", function(client)
-    mp.server.events.tell("not_crafting", packets.fetch_recipes, client, bjson.tobytes(compressed_recipes));
+    events.on("server:client_connected", function(client)
+      mp.server.events.tell("not_crafting", packets.fetch_recipes, client, bjson.tobytes(compressed_recipes));
+    end)
   end)
-end)
 
-_mp.as_client(function(client)
-  client.events.on("not_crafting", packets.fetch_recipes, function(bytes)
-    log.println("I", string.format("Got %s bytes of recipes.", #bytes));
-    local data = bjson.frombytes(bytes);
-    loader.recipes = module.decompress_recipes(data);
+  _mp.as_client(function(client)
+    print("client event");
+    client.events.on("not_crafting", packets.fetch_recipes, function(bytes)
+      log.println("I", string.format("Got %s bytes of recipes.", #bytes));
+      local data = bjson.frombytes(bytes);
+      loader.recipes = module.decompress_recipes(data);
+    end)
   end)
 end)
 

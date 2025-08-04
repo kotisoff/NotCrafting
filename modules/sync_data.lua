@@ -1,4 +1,5 @@
 local nu             = require "shared/utils/not_utils";
+local nc_events      = require "shared/utils/nc_events"
 local mp             = nu.multiplayer;
 local resource       = require "shared/utils/resource_func"
 local simpleitemtags = require "shared/utils/simpleitemtags"
@@ -10,8 +11,7 @@ require "shared/recipe/engine"; -- syncing is already done in recipe engine scri
 ---@type [ int ]
 local data = {};
 
-
-events.on(resource("first_tick"), function()
+nc_events.on("first_tick", function()
   log.println("I", "Syncing data");
   mp.as_server(function(server, mode)
     local craft_item = item.index("base:bazalt_breaker");

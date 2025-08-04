@@ -1,3 +1,4 @@
+---@diagnostic disable: duplicate-set-field
 local recipe_engine = require "client/crafting";
 local mp = require "shared/utils/not_utils".multiplayer.api.client;
 
@@ -8,19 +9,31 @@ function on_open(invid, x, y, z)
   pos = { x = x, y = y, z = z };
 end
 
+-- =========================funcs===========================
+
 local function check_grid(invid, slot)
   local grid = recipe_engine.get_grid(invid, { slot or 9 });
   return recipe_engine.resolve_grid(blockid, grid);
 end
 
+local function check_result(invid, slot, result_item)
+  local _, recipe = check_grid(invid, slot);
+  return recipe and recipe.result.id == result_item;
+end
+
 local function update_slot(invid, slot)
   local itemid, count = inventory.get(invid, slot);
-
   mp.sandbox.blocks.sync_slot(pos, { slot_id = slot, item_id = itemid, item_count = count });
 end
 
-function update_grid(invid, slot)
-  update_slot(invid, slot);
+-- ======================grid=slots=========================
+
+grid = {};
+
+function grid.update(invid, slot)
+  if slot then
+    update_slot(invid, slot);
+  end
 
   local _, recipe = check_grid(invid);
   if recipe then
@@ -30,23 +43,33 @@ function update_grid(invid, slot)
   end
 end
 
-function update_result(invid, slot)
+function grid.share(invid, slot)
+  local pid = hud.get_player();
+  local itemid, count = inventory.get(invid, slot);
+  local pinvid = player.get_inventory(pid);
+
+  if inventory.can_add_item(itemid, count, pinvid) then
+    inventory.add(pinvid, itemid, count);
+    inventory.set(invid, slot, 0, 0);
+  end
+end
+
+-- ======================result=slot========================
+
+result = {};
+
+function result.update(invid, slot)
   local itemid = inventory.get(invid, slot);
   if itemid ~= 0 then return end;
 
   local slots = check_grid(invid);
 
   if slots then
-    update_grid(invid);
+    grid.update(invid);
   end
 end
 
-local function check_result(invid, slot, result_item)
-  local _, recipe = check_grid(invid, slot);
-  return recipe and recipe.result.id == result_item
-end
-
-function share_func_result(invid, slot)
+function result.share(invid, slot)
   local pid = hud.get_player();
   local itemid, count = inventory.get(invid, slot);
   local pinvid = player.get_inventory(pid);
@@ -60,16 +83,5 @@ function share_func_result(invid, slot)
     inventory.add(pinvid, itemid, count);
     inventory.set(invid, slot, 0, 0);
     update_result(invid, slot);
-  end
-end
-
-function share_func(invid, slot)
-  local pid = hud.get_player();
-  local itemid, count = inventory.get(invid, slot);
-  local pinvid = player.get_inventory(pid);
-
-  if inventory.can_add_item(itemid, count, pinvid) then
-    inventory.add(pinvid, itemid, count);
-    inventory.set(invid, slot, 0, 0);
   end
 end
