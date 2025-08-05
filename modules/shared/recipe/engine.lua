@@ -4,9 +4,10 @@ local not_utils         = require "shared/utils/not_utils"
 local recipe_compressor = require "shared/recipe/utils/recipe_compressor"
 local packets           = require "shared/utils/declarations/packets"
 local nc_events         = require "shared/utils/nc_events"
-local _mp               = not_utils.multiplayer;
-local mp                = _mp.api;
+local mp                = not_utils.multiplayer;
 local log               = require "logger";
+
+local packid            = "not_crafting";
 
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
@@ -180,7 +181,7 @@ nc_events.on("first_tick", function()
   log.print();
   log.println("I", "Recipe types loading done.");
 
-  _mp.as_server(function(server, mode)
+  mp.as_server(function(server, mode)
     module.reload_recipes();
 
     if mode == "standalone" then return end;
@@ -191,13 +192,14 @@ nc_events.on("first_tick", function()
     local compressed_recipes = module.compress_recipes();
 
     events.on("server:client_connected", function(client)
-      mp.server.events.tell("not_crafting", packets.fetch_recipes, client, bjson.tobytes(compressed_recipes));
+      server.events.tell(packid, packets.fetch_recipes, client, bjson.tobytes(compressed_recipes));
     end)
   end)
+end)
 
-  _mp.as_client(function(client)
-    print("client event");
-    client.events.on("not_crafting", packets.fetch_recipes, function(bytes)
+nc_events.on("hud_open", function()
+  mp.as_client(function(client)
+    client.events.on(packid, packets.fetch_recipes, function(bytes)
       log.println("I", string.format("Got %s bytes of recipes.", #bytes));
       local data = bjson.frombytes(bytes);
       loader.recipes = module.decompress_recipes(data);
