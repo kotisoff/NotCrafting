@@ -1,6 +1,6 @@
 # NotCrafting
 
-Контент-пак добавляющий крафты, сделанный для [VoxelCore](https://github.com/MihailRis/VoxelEngine-Cpp).
+Контент-пак добавляющий крафты, сделанный для [VoxelCore](https://github.com/MihailRis/voxelcore).
 
 ## Скачать: [Стабильная](https://voxelworld.ru/mods/86) | [Последняя](https://github.com/kotisoff/NotCrafting/archive/refs/heads/multiplayer.zip)
 
