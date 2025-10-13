@@ -8,7 +8,6 @@ local blockid = block.index("not_crafting:crafting_table");
 
 function on_open(invid, x, y, z)
   pos = { x = x, y = y, z = z };
-  syncing.sync_inventory(x, y, z);
 end
 
 -- =========================funcs===========================

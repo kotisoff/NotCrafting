@@ -5,7 +5,7 @@ local mp        = nu.multiplayer;
 local packets   = require "shared/utils/declarations/packets"
 local log       = require "logger"
 
-local packid    = "not_crafting";
+local packid    = require "constants".pack_id;
 
 require "shared/recipe/engine"; -- syncing is already done in recipe engine script.
 

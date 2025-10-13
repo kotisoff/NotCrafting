@@ -7,7 +7,7 @@ local nc_events         = require "shared/utils/nc_events"
 local mp                = not_utils.multiplayer;
 local log               = require "logger";
 
-local packid            = "not_crafting";
+local packid            = require "constants".pack_id;
 
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
