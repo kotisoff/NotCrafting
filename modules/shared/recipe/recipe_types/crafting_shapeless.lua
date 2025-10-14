@@ -36,6 +36,10 @@ function module.check(grid, recipe)
     if not found then return nil end;
   end
 
+  if #items > 0 then
+    return nil;
+  end
+
   return found_slots;
 end
 

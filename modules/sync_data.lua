@@ -7,7 +7,7 @@ local log       = require "logger"
 
 local packid    = require "constants".pack_id;
 
-require "shared/recipe/engine"; -- syncing is already done in recipe engine script.
+require "shared/recipe/sync"; -- syncing is already done in recipe script.
 
 ---@type [ int ]
 local data = {};
@@ -16,8 +16,9 @@ nc_events.on("first_tick", function()
   log.println("I", "Syncing data");
   mp.as_server(function(server, mode)
     local craft_item = item.index("base:bazalt_breaker");
+
     if tags then
-      craft_item = (tags.get_items_by_tags("not_crafting:craft_item") or { craft_item })[1];
+      craft_item = (tags.get_items_by_tags("not_crafting:craft_item") or {})[1] or craft_item;
     end
 
     data = {
@@ -37,5 +38,8 @@ nc_events.on("first_tick", function()
   end)
 end)
 
-
-return data;
+return {
+  get = function()
+    return data;
+  end
+}
