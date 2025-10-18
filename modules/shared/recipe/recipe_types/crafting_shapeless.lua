@@ -5,6 +5,7 @@ module.id = resource("crafting_shapeless");
 
 ---@param grid not_crafting.class.grid
 ---@param recipe not_crafting.class.recipe
+---@return table<int, int> | nil
 function module.check(grid, recipe)
   local ingredients = recipe.ingredients --[[@as not_crafting.class.recipe.ingredient[] ]];
 
@@ -27,7 +28,7 @@ function module.check(grid, recipe)
     for index, grid_item in ipairs(items) do
       if grid_item.id == ingredient.item then
         found = true;
-        table.insert(found_slots, grid_item.slot);
+        found_slots[grid_item.slot] = grid_item.count;
         table.remove(items, index);
         break;
       end

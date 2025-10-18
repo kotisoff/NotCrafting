@@ -7,6 +7,7 @@ module.id = resource("crafting_shaped");
 ---@param recipe not_crafting.class.recipe
 ---@param grid not_crafting.class.grid
 ---@param offset vec2
+---@return table<int, int> | nil
 local function check_match(recipe, grid, offset)
   local found_slots = {};
   local used_slots = {};
@@ -32,7 +33,7 @@ local function check_match(recipe, grid, offset)
           return nil;
         end
 
-        table.insert(found_slots, grid_slot);
+        found_slots[grid_slot] = grid_item.count;
         used_slots[grid_slot] = true;
       end
     end

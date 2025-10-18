@@ -66,6 +66,7 @@ function result.update(invid, slot)
   local slots = check_grid(invid);
 
   if slots then
+    recipe_engine.take_items(invid, slots);
     grid.update(invid);
   end
 end
@@ -83,6 +84,6 @@ function result.share(invid, slot)
   while check_result(invid, slot, itemid) and inventory.can_add_item(itemid, count, pinvid, data) do
     inventory.add(pinvid, itemid, count);
     inventory.set(invid, slot, 0, 0);
-    update_result(invid, slot);
+    result.update(invid, slot);
   end
 end

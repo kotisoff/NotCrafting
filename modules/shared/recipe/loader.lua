@@ -94,13 +94,17 @@ function module.reload(recipe_types)
               for _, value in pairs(ingredients) do
                 latest_item = value.item;
                 local itemid = index_item(path, latest_item);
+
                 value.item = itemid;
+                value.count = value.count or 1;
               end
             elseif data.ingredient then
-              local value = data.ingredient;
-              latest_item = (value or {}).item;
+              local value = data.ingredient or {}; -- "or {}" потому что типы.
+              latest_item = value.item;
               local itemid = index_item(path, latest_item);
+
               value.item = itemid;
+              value.count = value.count or 1;
             end
           end)
 

@@ -5,12 +5,13 @@ module.id = resource("smelting");
 
 ---@param grid not_crafting.class.grid
 ---@param recipe not_crafting.class.recipe
+---@return table<int, int> | nil
 function module.check(grid, recipe)
   local ingredient = recipe.ingredient --[[@as not_crafting.class.recipe.ingredient ]];
 
   for slot, grid_item in ipairs(grid) do
     if grid_item.id == ingredient.item then
-      return { slot }
+      return { [slot] = ingredient.count }
     end
   end
 

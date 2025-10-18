@@ -3,14 +3,15 @@ local require_folder = require "shared/utils/require_folder";
 local nc_events      = require "shared/utils/nc_events"
 local log            = require "logger";
 
+
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
-local module         = {
-  ---@type table<str, (fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): int[] | nil)>
+local module = {
+  ---@type table<str, (fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): table<int, int> | nil)>
   engines = {}
 };
 
----@param check fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): int[] | nil
+---@param check fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): table<int, int> | nil
 function module.add_recipe_type(identifier, check)
   module.engines[identifier] = check;
 end
@@ -19,7 +20,7 @@ function module.reload_recipes() loader.reload(module.engines) end
 
 ---@param craftblockid int
 ---@param grid not_crafting.class.grid
----@return int[] | nil, not_crafting.class.recipe | nil
+---@return table<int, int> | nil, not_crafting.class.recipe | nil
 function module.resolve_grid(craftblockid, grid)
   local props = block.properties[craftblockid];
   ---@type { recipe_types: str[] }
