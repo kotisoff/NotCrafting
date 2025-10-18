@@ -46,10 +46,11 @@ function module.resolve_grid(craftblockid, grid)
   return nil;
 end
 
----@param slots int[]
+---@param invid int
+---@param slots table<int, int>
 function module.take_items(invid, slots)
-  for _, slot in ipairs(slots) do
-    inventory.decrement(invid, slot - 1, 1);
+  for slot, count in pairs(slots) do
+    inventory.decrement(invid, slot - 1, count or 1); -- "or 1" потому что я себе не доверяю сука.
   end
 end
 
