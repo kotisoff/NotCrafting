@@ -86,7 +86,7 @@ function module.reload(recipe_types)
           valid = pcall(function()
             data.result = {
               id = index_item(path, data.result.id),
-              count = math.abs(data.result.count) or 1
+              count = math.abs(data.result.count or 1)
             };
 
             local ingredients = data.key or data.ingredients;
@@ -96,7 +96,7 @@ function module.reload(recipe_types)
                 local itemid = index_item(path, latest_item);
 
                 value.item = itemid;
-                value.count = math.abs(value.count) or 1;
+                value.count = math.abs(value.count or 1);
               end
             elseif data.ingredient then
               local value = data.ingredient or {}; -- "or {}" потому что типы.
@@ -104,7 +104,7 @@ function module.reload(recipe_types)
               local itemid = index_item(path, latest_item);
 
               value.item = itemid;
-              value.count = math.abs(value.count) or 1;
+              value.count = math.abs(value.count or 1);
             end
           end)
 
