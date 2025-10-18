@@ -1,6 +1,5 @@
 ---@diagnostic disable: duplicate-set-field
-local crafting = require "client/crafting";
-local syncing = require "client/syncing";
+local recipe_engine = require "shared/recipe/engine";
 local mp = require "shared/utils/not_utils".multiplayer.api.client;
 
 local pos = { x = nil, y = nil, z = nil };
@@ -13,8 +12,8 @@ end
 -- =========================funcs===========================
 
 local function check_grid(invid, slot)
-  local grid = crafting.get_grid(invid, { slot or 9 });
-  return crafting.resolve_grid(blockid, grid);
+  local grid = recipe_engine.get_grid(invid, { slot or 9 });
+  return recipe_engine.resolve_grid(blockid, grid);
 end
 
 local function check_result(invid, slot, result_item)
