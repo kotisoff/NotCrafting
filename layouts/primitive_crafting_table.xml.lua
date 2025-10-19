@@ -1,10 +1,15 @@
-function share_func(invid, slot)
-  local pid = hud.get_player();
-  local itemid, count = inventory.get(invid, slot);
-  local pinvid = player.get_inventory(pid);
+local pos = { x = nil, y = nil, z = nil };
+local blockid = block.index("not_crafting:crafting_table");
 
-  if inventory.can_add_item(itemid, count, pinvid) then
-    inventory.add(pinvid, itemid, count);
-    inventory.set(invid, slot, 0, 0);
-  end
+local function get_pos()
+  return pos;
 end
+
+function on_open(invid, x, y, z)
+  pos = { x = x, y = y, z = z };
+end
+
+local utils = require("shared/recipe/utils/layout_utils")
+    .init_crafting_table(blockid, get_pos);
+
+grid = utils.grid;

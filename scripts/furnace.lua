@@ -1,9 +1,9 @@
-local blockid = block.index("not_crafting:furnace");
-
-function on_block_tick(x, y, z, tps)
-end
+local mp = require "shared/utils/not_utils".multiplayer;
+local syncing = require "client/syncing"
 
 function on_interact(x, y, z, pid)
-  hud.open_block(x, y, z)
-  return true
+  return mp.as_client(function(client, mode)
+    syncing.open_block(x, y, z);
+    return true;
+  end)
 end
