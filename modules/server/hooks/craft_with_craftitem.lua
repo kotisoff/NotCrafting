@@ -15,8 +15,6 @@ return function(pos, pid, ignored_slots, result_slot)
 
   local craft_item = unpack(data.get());
 
-  print(selected_item, craft_item);
-
   if selected_item == craft_item then
     mp.as_server(function(server, mode)
       local invid = inventory.get_block(unpack(pos));
