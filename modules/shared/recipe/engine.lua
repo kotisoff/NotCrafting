@@ -74,7 +74,7 @@ end
 -- =========================init============================
 
 nc_events.on("first_tick", function()
-  log.println("I", "Loading recipe types...");
+  log:println("I", "Loading recipe types...");
 
   ---@type { id: str, check: function }[]
   local recipe_types = require_folder "shared/recipe/recipe_types";
@@ -89,7 +89,7 @@ nc_events.on("first_tick", function()
       add = function(id, check)
         if type(id) == "string" and type(check) == "function" then
           if table.has(keys, id) then
-            return log.log("E", string.format("Recipe type with '%s' id already exists!", id))
+            return log:log("E", string.format("Recipe type with '%s' id already exists!", id))
           end
 
           table.insert(recipe_types, { id = id, check = check });
@@ -103,8 +103,8 @@ nc_events.on("first_tick", function()
     module.add_recipe_type(recipe_type.id, recipe_type.check);
   end;
 
-  log.print();
-  log.println("I", "Recipe types loading done.");
+  log:print();
+  log:println("I", "Recipe types loading done.");
 end)
 
 return module;

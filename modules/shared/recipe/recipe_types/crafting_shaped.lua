@@ -54,7 +54,7 @@ function module.check(grid, recipe)
   local row_size = math.sqrt(#grid);
 
   if row_size % 1 ~= 0 then
-    logger.println("E", "Wrong crafting grid size. Fix inventory size.");
+    logger:println("E", "Wrong crafting grid size. Fix inventory size.");
     return nil;
   end
 

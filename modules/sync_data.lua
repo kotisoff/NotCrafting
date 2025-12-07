@@ -13,7 +13,7 @@ require "shared/recipe/sync"; -- syncing is already done in recipe script.
 local data = {};
 
 nc_events.on("first_tick", function()
-  log.println("I", "Syncing data");
+  log:println("I", "Syncing data");
   mp.as_server(function(server, mode)
     local craft_item = item.index("base:bazalt_breaker");
 
@@ -25,10 +25,13 @@ nc_events.on("first_tick", function()
       craft_item
     };
 
-    ---@param client neutron.class.client
-    events.on("server:client_connected", function(client)
-      server.events.tell(packid, packets.sync_data, client, server.bson.serialize(data));
-    end)
+    mp.handle_event("server:client_connected", "not_crafting:first_tick",
+      ---@param client neutron.class.client
+      function(client)
+        server.events.tell(packid, packets.sync_data, client, server.bson.serialize(data));
+      end,
+      { "client" }
+    )
   end)
 
   mp.as_client(function(client, mode)

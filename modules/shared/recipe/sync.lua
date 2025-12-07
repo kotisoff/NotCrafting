@@ -15,7 +15,7 @@ nc_events.on("first_tick", function()
 
     if mode == "standalone" then return end;
 
-    log.println("I", "Compressing recipes...");
+    log:println("I", "Compressing recipes...");
 
     ---@type bytearray
     local compressed_recipes = compression.compress_recipes();
@@ -26,7 +26,7 @@ nc_events.on("first_tick", function()
     ---@param client neutron.class.client
     events.on("server:client_connected", function(client)
       server.events.tell(packid, packets.fetch_recipes, client, bytes);
-      log.println("I",
+      log:println("I",
         string.format("Sent %s bytes of recipes to %s(%s).", length, client.player.username, client.player.pid))
     end)
   end)
@@ -35,7 +35,7 @@ end)
 nc_events.on("hud_open", function()
   mp.as_client(function(client)
     client.events.on(packid, packets.fetch_recipes, function(bytes)
-      log.println("I", string.format("Received %s bytes of recipes.", #bytes));
+      log:println("I", string.format("Received %s bytes of recipes.", #bytes));
       local data = bjson.frombytes(bytes);
       loader.recipes = compression.decompress_recipes(data);
     end)
