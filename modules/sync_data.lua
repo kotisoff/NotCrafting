@@ -25,13 +25,12 @@ nc_events.on("first_tick", function()
       craft_item
     };
 
-    mp.handle_event("server:client_connected", "not_crafting:first_tick",
+    if pack.is_installed("server") then
       ---@param client neutron.class.client
-      function(client)
+      events.on("server:client_connected", function(client)
         server.events.tell(packid, packets.sync_data, client, server.bson.serialize(data));
-      end,
-      { "client" }
-    )
+      end)
+    end
   end)
 
   mp.as_client(function(client, mode)
