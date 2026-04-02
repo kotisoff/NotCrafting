@@ -1,9 +1,9 @@
 local nu        = require "shared/utils/not_utils";
 local tags      = nu.tags;
-local nc_events = require "shared/utils/nc_events"
+local nc_events = require "shared/utils/nc_events";
 local mp        = nu.multiplayer;
-local packets   = require "shared/utils/declarations/packets"
-local log       = require "logger"
+local packets   = require "shared/utils/declarations/packets";
+local log       = require "logger";
 
 local packid    = require "constants".pack_id;
 
@@ -18,7 +18,7 @@ nc_events.on("first_tick", function()
     local craft_item = item.index("base:bazalt_breaker");
 
     if tags then
-      craft_item = (tags.get_items_by_tags("not_crafting:craft_item") or {})[1] or craft_item;
+      craft_item = (tags.item.get_by_tags(false, "not_crafting:craft_item") or {})[1] or craft_item;
     end
 
     data = {

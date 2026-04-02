@@ -20,7 +20,7 @@ nc_events.on("first_tick", function()
     ---@type bytearray
     local compressed_recipes = compression.compress_recipes();
 
-    local bytes = bjson.tobytes(compressed_recipes);
+    local bytes = bjson.tobytes(compressed_recipes, true);
     local length = #bytes;
 
     ---@param client neutron.class.client

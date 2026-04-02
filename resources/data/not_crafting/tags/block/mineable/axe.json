@@ -1,0 +1,7 @@
+{
+  "values": [
+    "not_crafting:crafting_table",
+    "not_crafting:primitive_crafting_table",
+    "not_crafting:upgraded_primitive_crafting_table"
+  ]
+}
