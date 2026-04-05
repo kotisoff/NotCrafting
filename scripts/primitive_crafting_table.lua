@@ -1,20 +1,22 @@
-local mp                   = require "shared/utils/not_utils".multiplayer;
-local craft_with_craftitem = require "server/hooks/craft_with_craftitem"
-local syncing              = require "client/syncing"
-local data                 = require "sync_data";
+local mp = require "shared/utils/not_utils".multiplayer;
+local primitive_craft = require "server/hooks/primitive_craft"
+
+local controller = nil;
 
 function on_interact(x, y, z, pid)
-  local val = craft_with_craftitem({ x, y, z }, pid, nil, nil);
-  if val then return val end;
+  mp.as_server(function(server, mode)
+    local crafted = primitive_craft({ x, y, z }, pid);
+    if crafted then return crafted end;
 
-  return mp.as_client(function(client, mode)
-    local craft_item = unpack(data.get());
+    if not controller then
+      controller = server.sandbox.inventories.create_controller(
+        "not_crafting:module/server/inventory_controllers/crafting_table_controller.lua"
+      );
+      server.sandbox.inventories.set_controller(block.get(x, y, z), controller);
+    end
 
-    local itemid = inventory.get(player.get_inventory(pid));
-    if itemid ~= craft_item then
-      syncing.open_block(x, y, z);
-    end;
+    local _player = server.sandbox.players.get_by_pid(pid) --[[@as neutron.class.player]]
 
-    return true;
+    server.sandbox.inventories.open_block(_player, { x, y, z });
   end)
 end
