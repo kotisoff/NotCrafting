@@ -1,5 +1,4 @@
 local mp            = require "shared/utils/not_utils".multiplayer;
-local data          = require "sync_data";
 local recipe_engine = require "shared/recipe/engine";
 
 ---@type voxelcore.modules.base.util
@@ -16,9 +15,7 @@ return function(pos, pid, slot_options)
   local ignore = slot_options.ignore;
   local result = slot_options.result;
 
-  local craft_item = unpack(data.get());
-
-  if selected_item == craft_item then
+  if recipe_engine.is_crafting_item(selected_item) then
     local invid = inventory.get_block(unpack(pos));
     local blockid = block.get(unpack(pos));
 

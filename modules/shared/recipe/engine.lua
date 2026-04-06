@@ -1,14 +1,16 @@
-local loader         = require "shared/recipe/loader";
-local require_folder = require "shared/utils/require_folder";
-local nc_events      = require "shared/utils/nc_events"
-local log            = require "logger";
+local loader = require "shared/recipe/loader";
+local sync   = require "shared/recipe/sync"
 
+local tags   = require "shared/utils/not_utils".tags;
 
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
 local module = {
   ---@type table<str, (fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): table<int, int> | nil)>
-  engines = {}
+  engines = {},
+  compressed = {},
+  ---@type int[]
+  crafting_items = {}
 };
 
 ---@param check fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): table<int, int> | nil
@@ -16,7 +18,10 @@ function module.add_recipe_type(identifier, check)
   module.engines[identifier] = check;
 end
 
-function module.reload_recipes() loader.reload(module.engines) end
+function module.reload_recipes()
+  loader.reload(module.engines)
+  sync.compress();
+end
 
 ---@param craftblockid int
 ---@param grid not_crafting.class.grid
@@ -71,40 +76,20 @@ function module.get_grid(invid, ignored_slots)
   return grid;
 end
 
--- =========================init============================
+function module.is_crafting_item(itemid)
+  if #module.crafting_items <= 0 then
+    local default = item.index("base:bazalt_breaker");
 
-nc_events.on("first_tick", function()
-  log:println("I", "Loading recipe types...");
+    local items = tags.item.get_by_tags(false, "not_crafting:craft_item") or {};
 
-  ---@type { id: str, check: function }[]
-  local recipe_types = require_folder "shared/recipe/recipe_types";
-  local keys = {};
+    if #items <= 0 then
+      items = { default };
+    end
 
-  for _, value in ipairs(recipe_types) do
-    table.insert(keys, value.id);
+    module.crafting_items = items;
   end
 
-  local addon_craft_types = setmetatable({}, {
-    __index = {
-      add = function(id, check)
-        if type(id) == "string" and type(check) == "function" then
-          if table.has(keys, id) then
-            return log:log("E", string.format("Recipe type with '%s' id already exists!", id))
-          end
-
-          table.insert(recipe_types, { id = id, check = check });
-        end
-      end
-    }
-  })
-  events.emit("not_crafting:load_recipe_types", addon_craft_types);
-
-  for _, recipe_type in ipairs(recipe_types) do
-    module.add_recipe_type(recipe_type.id, recipe_type.check);
-  end;
-
-  log:print();
-  log:println("I", "Recipe types loading done.");
-end)
+  return table.has(module.crafting_items, itemid);
+end
 
 return module;

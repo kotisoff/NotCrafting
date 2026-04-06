@@ -3,7 +3,7 @@ local fileReader = nu.FileReader;
 local utils = nu.utils;
 
 local reader = fileReader.new();
-local logger = require "logger";
+local logger = require "shared/core/logger";
 
 local module = {
   ---@type table<string, not_crafting.class.recipe[]>

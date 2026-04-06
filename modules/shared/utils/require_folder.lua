@@ -1,4 +1,4 @@
-local packid = require "constants".pack_id;
+local packid = require "shared/core/constants".pack_id;
 
 ---@param folder string
 return function(folder)

@@ -1,5 +1,5 @@
 require "init";
-local nc_events = require "shared/utils/nc_events"
+local nc_events = require "shared/core/nc_events"
 
 local first_tick = true;
 function on_world_open()

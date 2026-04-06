@@ -1,5 +1,5 @@
 local resource = require "shared/utils/resource_func";
-local logger = require "logger";
+local logger = require "shared/core/logger";
 
 local module = {};
 module.id = resource("crafting_shaped");
