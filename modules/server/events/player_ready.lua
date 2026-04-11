@@ -11,7 +11,7 @@ nc_events.on("player_ready", function(client)
 
     net_events.server.tell(net_events.packets.recipes, client, bytes);
     logger:println("I",
-      string.format("Sent %s bytes of resources to %s(%s)", #bytes, client.player.username, client.player.pid)
+      string.format("Sent %s bytes of recipes to %s(%s)", #bytes, client.player.username, client.player.pid)
     );
   end
 

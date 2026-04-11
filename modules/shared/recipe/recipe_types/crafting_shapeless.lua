@@ -28,7 +28,7 @@ function module.check(grid, recipe)
     for index, grid_item in ipairs(items) do
       if grid_item.id == ingredient.item then
         found = true;
-        found_slots[grid_item.slot] = grid_item.count;
+        found_slots[grid_item.slot] = ingredient.count;
         table.remove(items, index);
         break;
       end

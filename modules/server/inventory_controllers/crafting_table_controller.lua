@@ -14,6 +14,8 @@ local function update_result(invid)
 
   if recipe then
     inventory.set(invid, result_slot, recipe.result.id, recipe.result.count)
+  else
+    inventory.set(invid, result_slot, 0, 0);
   end
 end
 

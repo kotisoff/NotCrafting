@@ -33,7 +33,7 @@ local function check_match(recipe, grid, offset)
           return nil;
         end
 
-        found_slots[grid_slot] = grid_item.count;
+        found_slots[grid_slot] = key.count;
         used_slots[grid_slot] = true;
       end
     end

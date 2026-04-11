@@ -14,3 +14,21 @@
 
 -- grid = utils.grid;
 -- result = utils.result;
+
+grid = {
+  update = function()
+
+  end,
+  share = function()
+
+  end
+}
+
+result = {
+  update = function()
+
+  end,
+  share = function()
+
+  end
+}
