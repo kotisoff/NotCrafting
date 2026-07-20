@@ -1,15 +1,19 @@
--- local pos = { x = nil, y = nil, z = nil };
--- local blockid = block.index("not_crafting:crafting_table");
+local mp = require "shared/utils/not_utils".multiplayer;
 
--- local function get_pos()
---   return pos;
--- end
+if mp.mode == "client" then return end;
 
--- function on_open(invid, x, y, z)
---   pos = { x = x, y = y, z = z };
--- end
+local pos = { x = nil, y = nil, z = nil };
+local blockid = block.index("not_crafting:crafting_table");
 
--- local utils = require("shared/recipe/utils/layout_utils")
---     .init_crafting_table(blockid, get_pos);
+local function get_pos()
+  return pos;
+end
 
--- grid = utils.grid;
+function on_open(invid, x, y, z)
+  pos = { x = x, y = y, z = z };
+end
+
+local utils = require("shared/recipe/utils/layout_utils")
+    .init_crafting_table(blockid, get_pos);
+
+grid = utils.grid;
