@@ -1,5 +1,6 @@
 require "init";
 local nc_events = require "shared/core/nc_events"
+local constants = require "shared/core/constants"
 
 local first_tick = true;
 function on_world_open()
@@ -16,5 +17,5 @@ function on_world_tick(tps)
 end
 
 function on_world_quit()
-  events.remove_by_prefix(PACK_ID);
+  events.remove_by_prefix(constants.pack_id);
 end
