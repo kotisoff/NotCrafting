@@ -30,7 +30,7 @@ function module.resolve_grid(craftblockid, grid)
   local props = block.properties[craftblockid];
   ---@type { recipe_types: str[] }
   local prop = (props["not_crafting:crafting_block_data"] or {});
-  local recipe_types = prop.recipe_types;
+  local recipe_types = prop["recipe-types"];
 
   if not recipe_types then return nil end;
 
