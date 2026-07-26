@@ -11,7 +11,7 @@
   "inventory-size": 10,
   "material": "base:wood",
   "base:durability": 6.0,
-  "not_crafting:crafting_block_data": {
+  "not_crafting:craft_data": {
     "recipe-types": ["not_crafting:crafting_shaped", "not_crafting:crafting_shapeless"],
     "result-slot": 9
   }

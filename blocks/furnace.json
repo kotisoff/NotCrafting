@@ -19,7 +19,7 @@
       }
     ]
   },
-  "not_crafting:crafting_block_data": {
+  "not_crafting:craft_data": {
     "recipe-types": ["not_crafting:smelting"]
   }
 }

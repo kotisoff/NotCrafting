@@ -1,4 +1,5 @@
 local mp = require "shared/utils/not_utils".multiplayer;
+local item_props = require "shared/api/v1/item_props"
 
 if mp.mode == "client" then return end;
 
@@ -7,12 +8,6 @@ local function resource(name) return PACK_ID .. ":" .. name end
 local recipe_engine = require "shared/recipe/engine";
 
 -- FURNACE DATA
-
-local function get_burntime(itemid)
-  local itemprops = item.properties[itemid];
-  if not itemprops then return nil end;
-  return itemprops["not_crafting:fuel_burn_time"];
-end
 
 local temp = {
   furnaces = {},
@@ -162,7 +157,7 @@ events.on(resource("world_tick"), function()
       local burn = data[2];
 
       local fuelid, fuelcount = inventory.get(invid, 1);
-      local itemburntime = get_burntime(fuelid);
+      local itemburntime = item_props.burn_time(fuelid);
       local burntime = burn[1];
       local maxburntime = burn[2];
 

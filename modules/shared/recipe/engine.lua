@@ -1,11 +1,12 @@
-local loader = require "shared/recipe/loader";
-local sync   = require "shared/recipe/sync"
+local loader      = require "shared/recipe/loader";
+local sync        = require "shared/recipe/sync"
+local block_props = require "shared/api/v1/block_props"
 
-local tags   = require "shared/utils/not_utils".tags;
+local tags        = require "shared/utils/not_utils".tags;
 
 ---@alias not_crafting.class.grid {id: int, count: int}[]
 
-local module = {
+local module      = {
   ---@type table<str, (fun(grid: not_crafting.class.grid, recipe: not_crafting.class.recipe): table<int, int> | nil)>
   engines = {},
   compressed = {},
@@ -27,14 +28,10 @@ end
 ---@param grid not_crafting.class.grid
 ---@return table<int, int> | nil, not_crafting.class.recipe | nil
 function module.resolve_grid(craftblockid, grid)
-  local props = block.properties[craftblockid];
-  ---@type { recipe_types: str[] }
-  local prop = (props["not_crafting:crafting_block_data"] or {});
-  local recipe_types = prop["recipe-types"];
+  local data = block_props.craft_data(craftblockid);
+  if #data.recipe_types == 0 then return nil end;
 
-  if not recipe_types then return nil end;
-
-  for _, recipe_type in ipairs(recipe_types) do
+  for _, recipe_type in ipairs(data.recipe_types) do
     local recipes = loader.recipes[recipe_type];
     local engine = module.engines[recipe_type];
 

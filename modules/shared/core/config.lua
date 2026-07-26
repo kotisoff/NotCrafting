@@ -1,7 +1,7 @@
 local config = {
   properties = {
-    crafting_block_data = "not_crafting:crafting_block_data",
-    fuel_burn_time = "not_crafting:fuel_burn_time"
+    craft_data = "not_crafting:craft_data",
+    burn_time = "not_crafting:burn_time"
   }
 }
 
