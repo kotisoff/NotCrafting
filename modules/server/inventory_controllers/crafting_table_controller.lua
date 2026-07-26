@@ -1,33 +1,16 @@
-local engine = require "shared/recipe/engine"
+local crafting_table = require "shared/crafting/crafting_table"
+local block_props    = require "shared/api/v1/block_props"
 
-local result_slot = 9
 ---@type int
-local blockid = nil;
-
-local function check_grid(invid)
-  local grid = engine.get_grid(invid, { result_slot })
-  return engine.resolve_grid(blockid, grid);
-end
-
-local function update_result(invid)
-  local _, recipe = check_grid(invid);
-
-  if recipe then
-    inventory.set(invid, result_slot, recipe.result.id, recipe.result.count)
-  else
-    inventory.set(invid, result_slot, 0, 0);
-  end
-end
-
-local function check_result(invid, slot, result_item)
-  local _, recipe = check_grid(invid);
-  return recipe and recipe.result.id == result_item;
-end
+local blockid        = nil;
+---@type int
+local result_slot    = nil;
 
 function on_open(player, invid, x, y, z)
   blockid = block.get(x, y, z);
+  result_slot = block_props.craft_data(blockid).result_slot;
 
-  update_result(invid);
+  crafting_table.update_result(invid, blockid, result_slot);
 end
 
 ---@param nplayer neutron.class.player
@@ -42,14 +25,10 @@ function on_update(nplayer, invid, slot, action, mode)
       inventory.move(invid, slot, pinvid);
     end
 
-    local slots = check_grid(invid);
-
-    if slots then
-      engine.take_items(invid, slots);
-    end
+    return crafting_table.take_and_update(invid, blockid, slot);
   end
 
-  update_result(invid);
+  crafting_table.update_result(invid, blockid, result_slot);
 end
 
 function on_share(nplayer, invid, slot, item_id)
@@ -66,10 +45,10 @@ function on_share(nplayer, invid, slot, item_id)
       inventory.move(invid, slot, pinvid);
     end
   else
-    while check_result(invid, slot, item_id) and inventory.can_add_item(item_id, count, pinvid, data) do
+    while crafting_table.take_and_check(invid, blockid, slot, item_id) and inventory.can_add_item(item_id, count, pinvid, data) do
       inventory.move(invid, slot, pinvid);
     end
   end
 
-  update_result(invid);
+  crafting_table.update_result(invid, blockid, result_slot);
 end
