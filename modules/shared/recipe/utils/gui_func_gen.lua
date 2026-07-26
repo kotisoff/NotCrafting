@@ -1,14 +1,40 @@
+--[[
+  TODO: Вырезать из ненадобности. Сейчас используется в синглплеер режиме.
+]]
+
 local recipe_engine = require "shared/recipe/engine";
-local mp = require "shared/utils/not_utils".multiplayer.api.client;
+local config        = require "shared/core/config"
 
-local module = {};
+local module        = {};
 
-function module.init_funcs(blockid, getpos)
+---@param getpos fun(): vec3
+local function init_gui_funcs(getpos)
   local funcs = {};
+
+  local _blockid = nil;
+  local function blockid()
+    if not _blockid then
+      _blockid = block.get(unpack(getpos()));
+    end
+
+    return _blockid;
+  end
+
+
+  local _result_slot = -1;
+  function funcs.result_slot()
+    if _result_slot and _result_slot < 0 then
+      local props = block.properties[blockid()] or {};
+      local data = props[config.properties.crafting_block_data] or {};
+      _result_slot = data["result-slot"];
+    end
+
+    return _result_slot;
+  end
 
   function funcs.check_grid(invid, slot)
     local grid = recipe_engine.get_grid(invid, { slot or 9 });
-    return recipe_engine.resolve_grid(blockid, grid);
+    return recipe_engine.resolve_grid(blockid(), grid);
   end
 
   function funcs.check_result(invid, slot, result_item)
@@ -16,26 +42,17 @@ function module.init_funcs(blockid, getpos)
     return recipe and recipe.result.id == result_item;
   end
 
-  function funcs.update_slot(invid, slot)
-    local itemid, count = inventory.get(invid, slot);
-    mp.sandbox.blocks.sync_slot(getpos(), { slot_id = slot, item_id = itemid, item_count = count });
-  end
-
   return funcs;
 end
 
----@param blockid int
 ---@param getpos fun(): { x: number, y: number, z: number }
----@param result_slot int | nil
-function module.init_crafting_table(blockid, getpos, result_slot)
-  local funcs = module.init_funcs(blockid, getpos);
+function module.init_crafting_table(getpos)
+  local funcs = init_gui_funcs(getpos);
 
   local grid = {};
 
   function grid.update(invid, slot)
-    if slot then
-      funcs.update_slot(invid, slot);
-    end
+    local result_slot = funcs.result_slot();
 
     if result_slot then
       local _, recipe = funcs.check_grid(invid);

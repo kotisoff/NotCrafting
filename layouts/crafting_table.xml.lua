@@ -1,20 +1,19 @@
 local mp = require "shared/utils/not_utils".multiplayer;
+local gui_func_gen = require "shared/recipe/utils/gui_func_gen"
 
-if mp.mode == "client" then return end;
+if mp.mode ~= "standalone" then return end;
 
-local pos = { x = nil, y = nil, z = nil };
-local blockid = block.index("not_crafting:crafting_table");
-
-local function get_pos()
-  return pos;
-end
+local pos = { nil, nil, nil };
 
 function on_open(invid, x, y, z)
-  pos = { x = x, y = y, z = z };
+  pos = { x, y, z };
 end
 
-local utils = require("shared/recipe/utils/layout_utils")
-    .init_crafting_table(blockid, get_pos, 9);
+local funcs = gui_func_gen.init_crafting_table(
+  function()
+    return pos;
+  end
+);
 
-grid = utils.grid;
-result = utils.result;
+grid = funcs.grid;
+result = funcs.result;
