@@ -1,5 +1,6 @@
 local crafting_table = require "shared/crafting/crafting_table"
 local block_props    = require "shared/api/v1/block_props"
+local standalone_ui  = require "shared/crafting/standalone_ui"
 
 ---@type int
 local blockid        = nil;
@@ -32,23 +33,5 @@ function on_update(nplayer, invid, slot, action, mode)
 end
 
 function on_share(nplayer, invid, slot, item_id)
-  local _, count = inventory.get(invid, slot);
-  local pinvid = player.get_inventory(nplayer.pid);
-
-  local data = {
-    invsize = inventory.size(pinvid),
-    stacksize = item.stack_size(item_id)
-  }
-
-  if slot ~= result_slot then
-    if inventory.can_add_item(item_id, count, pinvid, data) then
-      inventory.move(invid, slot, pinvid);
-    end
-  else
-    while crafting_table.take_and_check(invid, blockid, slot, item_id) and inventory.can_add_item(item_id, count, pinvid, data) do
-      inventory.move(invid, slot, pinvid);
-    end
-  end
-
-  crafting_table.update_result(invid, blockid, result_slot);
+  standalone_ui.chonky_share_handler(nplayer.pid, blockid, result_slot, invid, slot);
 end
