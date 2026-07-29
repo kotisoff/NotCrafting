@@ -54,4 +54,32 @@ function module.check_result(invid, blockid, result_slot, result_item)
   return recipe and recipe.result.id == result_item;
 end
 
+---@param pid int
+---@param blockid int
+---@param result_slot int|nil
+---@param invid int
+---@param slot int
+function module.handle_share(pid, blockid, result_slot, invid, slot)
+  local item_id, count = inventory.get(invid, slot);
+  local pinvid = player.get_inventory(pid);
+
+  local data = {
+    invsize = inventory.size(pinvid),
+    stacksize = item.stack_size(item_id)
+  }
+
+  if slot ~= result_slot then
+    if inventory.can_add_item(item_id, count, pinvid, data) then
+      inventory.move(invid, slot, pinvid);
+    end
+  else
+    while module.check_result(invid, blockid, slot, item_id) and inventory.can_add_item(item_id, count, pinvid, data) do
+      module.take_items(invid, blockid, result_slot);
+      inventory.add(pinvid, item_id, count);
+    end
+  end
+
+  module.update_result(invid, blockid, result_slot);
+end
+
 return module;

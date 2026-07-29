@@ -5,20 +5,22 @@ local crafting_table = require "shared/crafting/crafting_table"
 
 if mp.mode ~= "standalone" then return end;
 
-local blockid = nil;
-local result_slot = nil;
+local src = {
+  blockid = nil,
+  result_slot = nil
+}
 
 function on_open(invid, x, y, z)
-  blockid = block.get(x, y, z);
-  result_slot = block_props.craft_data(blockid).result_slot;
+  local blockid = block.get(x, y, z);
+  local result_slot = block_props.craft_data(blockid).result_slot;
+
+  src.blockid = blockid;
+  src.result_slot = result_slot;
 
   crafting_table.update_result(invid, blockid, result_slot);
 end
 
-local blockid_fn = function() return blockid end;
-local result_slot_fn = function() return result_slot end;
-
-local handlers = standalone_ui.create_handlers(blockid_fn, result_slot_fn);
+local handlers = standalone_ui.create_handlers(src);
 
 grid = handlers.grid;
 result = handlers.result;
