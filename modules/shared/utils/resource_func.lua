@@ -1,4 +1,4 @@
-local PACK_ID = require "constants".pack_id;
+local PACK_ID = require "shared/core/constants".pack_id;
 
 ---@param name string|nil
 ---@return string id Identifier with name or packid if name is nil.

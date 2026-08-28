@@ -1,43 +1,100 @@
-local loader      = require "shared/recipe/loader";
-local engine      = require "shared/recipe/engine";
-local compression = require "shared/recipe/utils/compression"
-local packid      = require "constants".pack_id;
-local packets     = require "shared/utils/declarations/packets"
-local not_utils   = require "shared/utils/not_utils"
-local mp          = not_utils.multiplayer;
-local nc_events   = require "shared/utils/nc_events"
-local log         = require "logger";
+local loader = require "shared/recipe/loader";
 
+local module = {
+  bytes = {}
+};
 
-nc_events.on("first_tick", function()
-  mp.as_server(function(server, mode)
-    engine.reload_recipes();
+-- -@param grid not_crafting.class.grid
+-- -@return [ [int, int, int][], int ]
+-- function module.compress_grid(grid)
+--   local t_grid = {
+--     {},
+--     #grid
+--   };
 
-    if mode == "standalone" then return end;
+--   for slot, g_item in ipairs(grid) do
+--     if g_item.id > 0 then
+--       table.insert(t_grid[1], { g_item.id, g_item.count, slot });
+--     end
+--   end
 
-    log:println("I", "Compressing recipes...");
+--   return t_grid;
+-- end
 
-    ---@type bytearray
-    local compressed_recipes = compression.compress_recipes();
+-- -@param comp_grid [ [int, int, int][], int ]
+-- function module.decompress_grid(comp_grid)
+--   local data, size = unpack(comp_grid);
 
-    local bytes = bjson.tobytes(compressed_recipes, true);
-    local length = #bytes;
+--   local grid = {};
 
-    ---@param client neutron.class.client
-    events.on("server:client_connected", function(client)
-      server.events.tell(packid, packets.fetch_recipes, client, bytes);
-      log:println("I",
-        string.format("Sent %s bytes of recipes to %s(%s).", length, client.player.username, client.player.pid))
-    end)
-  end)
-end)
+--   for slot = 1, size do
+--     local g_item;
+--     for _, value in ipairs(data) do
+--       local id, count, _slot = unpack(value);
+--       if slot == _slot then
+--         g_item = {
+--           id = id,
+--           count = count
+--         };
+--       end
+--     end
 
-nc_events.on("hud_open", function()
-  mp.as_client(function(client)
-    client.events.on(packid, packets.fetch_recipes, function(bytes)
-      log:println("I", string.format("Received %s bytes of recipes.", #bytes));
-      local data = bjson.frombytes(bytes);
-      loader.recipes = compression.decompress_recipes(data);
-    end)
-  end)
-end)
+--     table.insert(grid, g_item or { id = 0, count = 0 });
+--   end
+
+--   return grid;
+-- end
+
+-- ==================recipes=compression====================
+
+---@param recipe not_crafting.class.recipe
+local function compress_recipe(recipe)
+  recipe.type = nil;
+
+  return recipe;
+end
+
+---@param recipe not_crafting.class.recipe
+---@param type str
+local function decompress_recipe(recipe, type)
+  recipe.type = type;
+
+  return recipe;
+end
+
+---@return table
+function module.compress()
+  local compressed = {};
+  for key, recipes in pairs(loader.recipes) do
+    compressed[key] = {};
+    local temp = compressed[key];
+    for _, recipe in ipairs(recipes) do
+      local comp = compress_recipe(recipe);
+      table.insert(temp, comp);
+    end
+  end
+
+  local bytes = bjson.tobytes(compressed, true);
+
+  module.bytes = bytes;
+  return bytes;
+end
+
+---@param bytes bytearray
+function module.decompress(bytes)
+  local compressed = bjson.frombytes(bytes);
+  local decompressed = {};
+
+  for key, recipes in pairs(compressed) do
+    decompressed[key] = {};
+    local temp = decompressed[key];
+    for _, recipe in ipairs(recipes) do
+      local decomp = decompress_recipe(recipe, key);
+      table.insert(temp, decomp);
+    end
+  end
+
+  loader.recipes = decompressed;
+end
+
+return module;

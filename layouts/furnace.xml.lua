@@ -1,14 +1,13 @@
+local mp = require "shared/utils/not_utils".multiplayer;
+local item_props = require "shared/api/v1/item_props"
+
+if mp.mode == "client" then return end;
+
 local function resource(name) return PACK_ID .. ":" .. name end
 
 local recipe_engine = require "shared/recipe/engine";
 
 -- FURNACE DATA
-
-local function get_burntime(itemid)
-  local itemprops = item.properties[itemid];
-  if not itemprops then return nil end;
-  return itemprops["not_crafting:fuel_burn_time"];
-end
 
 local temp = {
   furnaces = {},
@@ -59,17 +58,19 @@ local function change_furnace_model(x, y, z, state)
   local key = getFurnaceKey({ x, y, z });
   local data = temp.data[key];
 
-  local wrapid = data[5];
-  if (state and wrapid) or (not state and not wrapid) then
+  local lit = data[5];
+  if type(lit) == "nil" then
+    lit = false;
+  end
+
+  if (state and lit) or (not state and not lit) then
     return false;
   end
 
-  if state then
-    data[5] = gfx.blockwraps.wrap({ x, y, z }, "wraps/furnace_fire");
-  else
-    gfx.blockwraps.unwrap(wrapid);
-    data[5] = nil;
-  end
+  local variant = state and 1 or 0;
+  block.set_variant(x, y, z, variant);
+
+  data[5] = state;
 
   return true;
 end
@@ -108,7 +109,7 @@ function update_result(invid, slot)
     local api = require("not_survival:api");
     local exp_points = data[4];
     if exp_points > 0 then
-      api.exp.give(hud.get_player(), exp_points);
+      api.survival.experience.give(hud.get_player(), exp_points); -- NS 0.2.x compatible only. TODO: in NS 0.3.0
       data[4] = 0;
     end
   end
@@ -156,7 +157,7 @@ events.on(resource("world_tick"), function()
       local burn = data[2];
 
       local fuelid, fuelcount = inventory.get(invid, 1);
-      local itemburntime = get_burntime(fuelid);
+      local itemburntime = item_props.burn_time(fuelid);
       local burntime = burn[1];
       local maxburntime = burn[2];
 

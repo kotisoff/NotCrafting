@@ -3,7 +3,7 @@ local fileReader = nu.FileReader;
 local utils = nu.utils;
 
 local reader = fileReader.new();
-local logger = require "logger";
+local logger = require "shared/core/logger";
 
 local module = {
   ---@type table<string, not_crafting.class.recipe[]>
@@ -22,7 +22,7 @@ end
 ---@param reason str
 local function log_recipe_error(path, reason)
   logger:log("E",
-    string.format("Failed to index item in '%s' from '%s/%s'. Reason: %s",
+    string.format("Failed indexing recipe '%s' from '%s/%s'. Reason: %s",
       file.stem(path),
       file.prefix(path),
       file.name(file.parent(file.parent(path))),
@@ -81,7 +81,7 @@ function module.reload(recipe_types)
         local reason, latest_item;
 
         if not valid then
-          reason = string.format("recipe type '%s' is not supported", data.type);
+          reason = string.format("Recipe type '%s' is not supported", data.type);
         else
           valid = pcall(function()
             data.result = {

@@ -4,7 +4,22 @@
   "inventory-size": 3,
   "material": "base:stone",
   "base:durability": 13,
-  "not_crafting:crafting_block_data": {
-    "recipe_types": ["not_crafting:smelting"]
+  "state-based": {
+    "bits": 1,
+    "variants": [
+      {
+        "texture-faces": [
+          "furnace_side",
+          "furnace_side",
+          "furnace_top",
+          "furnace_top",
+          "furnace_side",
+          "furnace_front_on"
+        ]
+      }
+    ]
+  },
+  "not_crafting:craft_data": {
+    "recipe-types": ["not_crafting:smelting"]
   }
 }

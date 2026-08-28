@@ -1,5 +1,5 @@
 local resource = require "shared/utils/resource_func";
-local logger = require "logger";
+local logger = require "shared/core/logger";
 
 local module = {};
 module.id = resource("crafting_shaped");
@@ -33,7 +33,7 @@ local function check_match(recipe, grid, offset)
           return nil;
         end
 
-        found_slots[grid_slot] = grid_item.count;
+        found_slots[grid_slot] = key.count;
         used_slots[grid_slot] = true;
       end
     end

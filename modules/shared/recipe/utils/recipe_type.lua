@@ -1,3 +1,5 @@
+---@meta
+
 ---@class not_crafting.class.recipe.ingredient
 ---@field item? int вместо tag
 ---@field count? int default=1
