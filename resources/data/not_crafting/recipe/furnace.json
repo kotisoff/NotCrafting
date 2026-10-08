@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "#": {
-      "item": "not_survival:cobblestone"
+      "item": "ns_extras:cobblestone"
     }
   },
   "pattern": ["###", "# #", "###"],

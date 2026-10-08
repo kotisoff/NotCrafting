@@ -9,7 +9,7 @@
       "item": "not_crafting:upgraded_primitive_crafting_table"
     },
     "O": {
-      "item": "not_survival:flint"
+      "item": "ns_extras:flint"
     }
   },
   "pattern": [" # ", "OXO", " # "],

@@ -9,10 +9,10 @@
       "item": "not_crafting:primitive_crafting_table"
     },
     {
-      "item": "not_survival:flint"
+      "item": "ns_extras:flint"
     },
     {
-      "item": "not_survival:flint"
+      "item": "ns_extras:flint"
     }
   ],
   "result": {
